@@ -1,23 +1,8 @@
 const SB_URL = "https://ozsfnvzqtizptxymtxzf.supabase.co";
 const SB_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im96c2ZudnpxdGl6cHR4eW10eHpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwNjIzMjksImV4cCI6MjEwNjYzODMyOX0.2TuFxRzKL4aHjRsFNyVsG3-LPn4UGre64NzhnT7W1Po";
-const supabase = window.supabase.createClient(SB_URL, SB_ANON_KEY);
-const FALLBACK = window.DEFAULT_PRODUCTS || [];
+const API=SB_URL+"/rest/v1";const FALLBACK=window.DEFAULT_PRODUCTS||[];
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
-async function loadBrand(){
- if(!(SB_URL.startsWith("http") && !SB_URL.includes("PASTE_") && !SB_ANON_KEY.includes("PASTE_"))) return;
- const {data}=await supabase.from("site_settings").select("brand").eq("id",1).maybeSingle();
- if(data?.brand){ document.querySelectorAll(".brand b").forEach(el=>{el.innerHTML=esc(data.brand);}); document.querySelectorAll(".phone-top b").forEach(el=>el.textContent=data.brand); document.title=data.brand+" — Katalog Digital"; document.querySelector("meta[name=description]")?.setAttribute("content",data.brand+" — katalog produk dan layanan digital."); document.querySelector("footer .wrap")?.replaceWith(Object.assign(document.querySelector("footer .wrap"),{innerHTML:"© <span id=\"year\"></span> "+esc(data.brand)+". All rights reserved."})); document.getElementById("year").textContent=new Date().getFullYear(); }
-}
-async function render(){
- let list=[];
- if(SB_URL.startsWith("http") && !SB_URL.includes("PASTE_") && !SB_ANON_KEY.includes("PASTE_")){
-  const {data,error}=await supabase.from("products").select("id,title,description,image,link,order_num,active").eq("active",true).order("order_num",{ascending:true});
-  if(!error) list=data||[];
- }
- if(!list.length) list=FALLBACK.filter(x=>Number(x.active)===1).sort((a,b)=>(a.order||0)-(b.order||0));
- const grid=document.getElementById("productGrid"), empty=document.getElementById("empty");
- document.getElementById("count").textContent=`${list.length} produk aktif`;
- grid.innerHTML=list.map(p=>`<a class="card" href="${esc(p.link)}" target="_blank" rel="noopener noreferrer">${p.image?`<img class="card-img" src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy">`:`<div class="card-placeholder">✦</div>`}<div class="card-body"><h3>${esc(p.title)}</h3><p>${esc(p.description)}</p><div class="card-bottom"><span>● Aktif</span><b>Lihat Produk ↗</b></div></div></a>`).join("");
- empty.classList.toggle("hidden",list.length!==0);grid.classList.toggle("hidden",list.length===0);
-}
-document.getElementById("year").textContent=new Date().getFullYear();loadBrand().finally(render);
+async function api(path){const r=await fetch(API+path,{headers:{apikey:SB_ANON_KEY}});if(!r.ok)throw new Error("HTTP "+r.status);return r.json();}
+async function loadBrand(){try{const d=await api('/site_settings?select=brand&id=eq.1');const brand=d?.[0]?.brand;if(!brand)return;document.querySelectorAll(".brand b").forEach(el=>el.innerHTML=esc(brand));document.querySelectorAll(".phone-top b").forEach(el=>el.textContent=brand);document.title=brand+" — Katalog Digital";document.querySelector("meta[name=description]")?.setAttribute("content",brand+" — katalog produk dan layanan digital.");const footer=document.querySelector("footer .wrap");if(footer)footer.innerHTML=`© <span id="year"></span> ${esc(brand)}. All rights reserved.`;const y=document.getElementById("year");if(y)y.textContent=new Date().getFullYear();}catch(e){}}
+async function render(){let list=[];try{list=await api('/products?select=id,title,description,image,link,order_num,active&active=eq.true&order=order_num.asc');}catch(e){}if(!list.length)list=FALLBACK.filter(x=>Number(x.active)===1).sort((a,b)=>(a.order||0)-(b.order||0));const grid=document.getElementById("productGrid"),empty=document.getElementById("empty");document.getElementById("count").textContent=`${list.length} produk aktif`;grid.innerHTML=list.map(p=>`<a class="card" href="${esc(p.link)}" target="_blank" rel="noopener noreferrer">${p.image?`<img class="card-img" src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy">`:`<div class="card-placeholder">✦</div>`}<div class="card-body"><h3>${esc(p.title)}</h3><p>${esc(p.description)}</p><div class="card-bottom"><span>● Aktif</span><b>Lihat Produk ↗</b></div></div></a>`).join("");empty.classList.toggle("hidden",list.length!==0);grid.classList.toggle("hidden",list.length===0);}
+const y=document.getElementById("year");if(y)y.textContent=new Date().getFullYear();loadBrand().finally(render);
