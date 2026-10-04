@@ -60,3 +60,7 @@ html,body{overflow-x:hidden;max-width:100%}.app{max-width:100%;overflow-x:clip}
 .d-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:14px 16px;border-radius:18px;border:1px solid rgba(130,130,255,.3);background:rgba(14,14,40,.6);backdrop-filter:blur(10px)}
 .d-toggle h2{margin:0;font:800 22px/1.15 var(--disp);letter-spacing:-.02em;overflow-wrap:anywhere}.d-toggle span{font-size:20px;color:#b9a2ff;transition:transform .2s;flex:none}.d-toggle.open span{transform:rotate(180deg)}
 .dd:not(.hidden){margin-top:14px;animation:in .25s ease}
+
+.home-desc{margin:2px 4px 20px;font-size:15px;line-height:1.5;color:#dfe2f7}.grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+.bar:has(.brand:only-child){justify-content:center}.bar .brand-logo{width:44px;height:44px;border-radius:13px}

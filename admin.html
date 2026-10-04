@@ -3,7 +3,7 @@
 <title>Admin — Witama Store.ID</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261004-v6"></head>
+<link rel="stylesheet" href="style.css?v=20261004-v8"></head>
 <body class="admin-page"><div class="app">
 <div id="loginView" class="view"><div class="panel">
   <a class="brand" href="index.html"><span class="brand-logo"><span>W</span></span><b class="brand-name">Witama <i>Store.ID</i></b></a>
@@ -24,16 +24,17 @@
   <div class="logo-row"><div class="lp"><img id="smallLogoPreview" alt=""><span id="smallLogoEmpty">W</span></div><label class="up">▣ Pilih Foto<input id="smallLogoFile" type="file" accept="image/*"></label><button id="delSmall" class="trash" aria-label="Hapus">🗑</button></div></div>
  <div class="sub"><b>Logo Besar / Background</b><small>Jadi wallpaper layar penuh di website.</small>
   <div class="logo-row"><div class="lp big"><img id="largeLogoPreview" alt=""><span id="largeLogoEmpty">W</span></div><label class="up">▣ Pilih Foto<input id="largeLogoFile" type="file" accept="image/*"></label><button id="delLarge" class="trash" aria-label="Hapus">🗑</button></div></div>
+ <button id="saveLogos" class="btn-main sm">Simpan Logo</button>
 </section>
 <section class="panel"><h3>Pengaturan Umum</h3>
- <details class="sub"><summary><b>Informasi Website</b><small>Edit judul, deskripsi, dan pengaturan lainnya.</small></summary><label>Nama Website<input id="fBrand" placeholder="Witama Store.ID"></label></details>
- <button id="saveLogos" class="btn-main sm">Simpan Perubahan</button></section>
+ <details class="sub" open><summary><b>Informasi Website</b><small>Edit judul, deskripsi, dan pengaturan lainnya.</small></summary><label>Nama Website<input id="fBrand" placeholder="Witama Store.ID"></label><label>Deskripsi Website (tampil di beranda)<textarea id="fSiteDesc" placeholder="Solusi digital terbaik untuk kebutuhan online kamu."></textarea></label></details>
+ <button id="saveGeneral" class="btn-main sm">Simpan Perubahan</button></section>
 
 <section class="panel"><div class="sec-head"><b>KATALOG</b><span id="productCount">0 katalog</span></div><button id="addBtn" class="btn-main sm">＋ Tambah Katalog</button><div id="adminList" class="admin-list"></div></section>
 <footer><button id="logoutBtn" class="pill">Keluar</button></footer></div>
 
 <div id="modal" class="sheet hidden"><div class="app"><header class="bar"><b id="modalTitle" class="brand-name">Tambah Katalog</b><div class="bar-r"><button id="closeModal" class="pill sq" type="button">×</button></div></header>
-<form id="productForm"><input type="hidden" id="editId">
+<form id="productForm" onsubmit="return false"><input type="hidden" id="editId">
  <div class="panel"><label>Nama Katalog<input id="fTitle" required placeholder="Masukkan nama katalog..."></label>
   <label>Deskripsi<textarea id="fDesc" required placeholder="Deskripsi katalog..."></textarea></label>
   <label>Link Tujuan<input id="fLink" type="url" required placeholder="https://contoh.com"></label>
@@ -42,4 +43,4 @@
  <div class="panel sw"><b>Status</b><label class="switch"><input type="checkbox" id="fActive" checked><i></i></label></div>
  <button class="btn-main">▣ Simpan</button></form></div></div>
 </div>
-<script src="data.js?v=20261004-v6"></script><script src="admin.js?v=20261004-v6"></script></body></html>
+<script src="data.js?v=20261004-v8"></script><script src="admin.js?v=20261004-v8"></script></body></html>

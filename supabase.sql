@@ -72,3 +72,6 @@ on public.site_settings for update to authenticated using (true) with check (tru
 -- Foto diperkecil di browser lalu disimpan sebagai data URL di tabel.
 -- Jadi upload logo/foto tidak memerlukan bucket Storage dan tidak akan kena
 -- error "new row violates row-level security policy" dari bucket.
+
+-- Deskripsi beranda yang bisa diedit dari admin
+alter table public.site_settings add column if not exists description text not null default 'Solusi digital terbaik untuk kebutuhan online kamu.';
