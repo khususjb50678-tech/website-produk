@@ -3,96 +3,56 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Admin — Witama Store.ID</title>
-<meta name="theme-color" content="#070812">
-<link rel="stylesheet" href="style.css?v=final20261004">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=20261004-final">
 </head>
 <body class="admin-page">
 <div id="loginView" class="login-view">
-  <div class="login-glow"></div>
   <div class="login-card">
-    <a class="brand brand-login" href="index.html"><span class="logo-mark"><span>W</span></span><b>Witama <i>Store.ID</i></b></a>
-    <span class="eyebrow">CONTROL CENTER</span>
-    <h1>Admin Panel</h1>
-    <p>Kelola katalog dan tampilan brand dari satu halaman.</p>
-    <div id="loginError" class="notice error hidden"></div>
-    <div id="loginInfo" class="notice hidden"></div>
+    <a class="brand" href="index.html"><span class="brand-logo"><span>W</span></span><span class="brand-name">Witama <i>Store.ID</i></span></a>
+    <span class="section-label">CONTROL CENTER</span><h1>Admin Katalog</h1><p>Kelola katalog dan logo website dari sini.</p>
+    <div id="loginError" class="notice error hidden"></div><div id="loginInfo" class="notice hidden"></div>
     <form id="loginForm" novalidate>
-      <label>Email Admin<input id="loginUser" type="email" autocomplete="username" placeholder="admin@email.com" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
+      <label>Email Admin<input id="loginUser" type="email" autocomplete="username" placeholder="email Supabase" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
       <label>Password<input id="loginPass" type="password" autocomplete="current-password" placeholder="••••••••"></label>
-      <button id="loginBtn" type="submit" class="btn primary full">Masuk</button>
+      <button id="loginBtn" type="submit" class="admin-primary full">Masuk</button>
     </form>
   </div>
 </div>
 
 <div id="adminView" class="hidden">
-<header class="admin-nav">
-  <div class="app-shell nav-shell">
-    <a class="brand" href="index.html"><span class="logo-mark"><span>W</span></span><b>Witama <i>Store.ID</i></b></a>
-    <div class="admin-user"><a class="admin-site-link" href="index.html" target="_blank" rel="noopener">Lihat Website ↗</a><span id="adminNameTop">Admin</span><button id="logoutBtn" class="icon-btn" title="Keluar">↪</button></div>
-  </div>
-</header>
-
-<main class="app-shell admin-main">
-  <section class="admin-hero">
-    <div><span class="eyebrow">BERANDA</span><h1>Kelola <strong>Witama Store.ID</strong></h1><p>Produk, logo kecil, dan logo besar website ada di sini.</p></div>
-    <button id="addBtn" class="btn primary">＋ Tambah Produk</button>
-  </section>
+<header class="admin-topbar"><div class="admin-top-inner">
+  <a class="brand" href="index.html"><span class="brand-logo" id="adminLogo"><span>W</span></span><span class="brand-name">Witama <i>Store.ID</i></span></a>
+  <div class="admin-top-actions"><a href="index.html" class="admin-link">Lihat Website ↗</a><button id="logoutBtn" class="admin-link">Keluar</button></div>
+</div></header>
+<main class="admin-main">
+  <div class="admin-head"><div><span class="section-label">BERANDA</span><h1>Kelola <span>Witama Store.ID</span></h1><p>Atur katalog dan logo website.</p></div><button id="addBtn" class="admin-primary">＋ Tambah Katalog</button></div>
   <div id="notice" class="notice hidden"></div>
+  <div class="admin-stats"><div><small>Katalog</small><b id="totalStat">0</b></div><div><small>Aktif</small><b id="activeStat">0</b></div><div><small>Nonaktif</small><b id="inactiveStat">0</b></div></div>
 
-  <section class="stats-grid">
-    <div class="stat-card"><span>Produk</span><b id="totalStat">0</b><small>Total katalog</small></div>
-    <div class="stat-card blue"><span>Aktif</span><b id="activeStat">0</b><small>Tampil di website</small></div>
-    <div class="stat-card pink"><span>Nonaktif</span><b id="inactiveStat">0</b><small>Disembunyikan</small></div>
-  </section>
-
-  <section class="panel logo-panel">
-    <div class="panel-title"><div><span class="eyebrow">BRANDING</span><h2>Logo Website</h2><p>Upload langsung dari file HP. Tidak perlu URL.</p></div></div>
-    <div class="logo-settings-grid">
-      <div class="logo-setting-card">
-        <div class="setting-head"><div><b>Logo Kecil</b><small>Navbar / favicon</small></div><button id="smallLogoBtn" class="btn small">Pilih Logo</button></div>
-        <div class="small-logo-preview"><img id="smallLogoPreview" alt="Logo kecil"><span id="smallLogoEmpty">Belum ada logo</span></div>
-        <input id="smallLogoFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
-      </div>
-      <div class="logo-setting-card large-setting">
-        <div class="setting-head"><div><b>Logo Besar</b><small>Hero / background tengah</small></div><button id="largeLogoBtn" class="btn small">Pilih Logo</button></div>
-        <div class="large-logo-preview"><img id="largeLogoPreview" alt="Logo besar"><span id="largeLogoEmpty">Belum ada logo besar</span></div>
-        <input id="largeLogoFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
-      </div>
+  <section class="admin-panel"><div class="panel-title"><div><span class="section-label">BRANDING</span><h2>Logo Website</h2><p>Upload langsung dari file HP. Tidak perlu URL dan tidak memakai Supabase Storage.</p></div></div>
+    <div class="branding-grid">
+      <div class="upload-box"><div class="upload-head"><div><b>Logo Kecil</b><small>Navbar / ikon</small></div><label class="upload-btn">Pilih Foto<input id="smallLogoFile" type="file" accept="image/*"></label></div><div class="preview-box"><img id="smallLogoPreview" alt="Logo kecil"><div id="smallLogoEmpty" class="upload-empty">Belum ada logo</div></div></div>
+      <div class="upload-box"><div class="upload-head"><div><b>Logo Besar</b><small>Cadangan branding / detail</small></div><label class="upload-btn">Pilih Foto<input id="largeLogoFile" type="file" accept="image/*"></label></div><div class="preview-box large"><img id="largeLogoPreview" alt="Logo besar"><div id="largeLogoEmpty" class="upload-empty">Belum ada logo</div></div></div>
     </div>
-    <button id="saveBranding" class="btn primary full">Simpan Branding</button>
+    <button id="saveLogos" class="admin-primary">Simpan Logo</button>
+    <p class="hint">Foto otomatis diperkecil di HP sebelum disimpan ke database. Tidak perlu membuat bucket Storage.</p>
   </section>
 
-  <section class="panel">
-    <div class="panel-head"><div><span class="eyebrow">KATALOG</span><h2>Daftar Produk</h2></div><span id="productCount" class="muted-count">0 item</span></div>
-    <div id="adminList"></div>
-  </section>
+  <section class="admin-panel"><div class="panel-title"><div><span class="section-label">KATALOG</span><h2>Daftar Katalog</h2></div><span id="productCount" class="catalog-count">0 katalog</span></div><div id="adminList" class="admin-list"></div></section>
+</main></div>
 
-  <section class="panel settings-panel">
-    <div class="panel-head"><div><span class="eyebrow">IDENTITAS</span><h2>Nama Toko</h2></div></div>
-    <label>Nama Brand<input id="brandInput" value="Witama Store.ID"></label>
-    <label>Nama Admin<input id="settingsUser" value="admin"></label>
-    <button id="saveSettings" class="btn primary full">Simpan Pengaturan</button>
-  </section>
-
-  <p class="admin-footer">Witama Store.ID · Fast · Safe · Trusted</p>
-</main>
-</div>
-
-<div id="modal" class="modal hidden"><div class="modal-box">
-  <div class="modal-head"><div><span class="eyebrow">KATALOG</span><h2 id="modalTitle">Tambah Produk</h2></div><button id="closeModal" class="close-btn">×</button></div>
-  <form id="productForm">
-    <input type="hidden" id="editId">
-    <label>Judul Produk<input id="fTitle" required placeholder="WSID | Nomor Virtual"></label>
-    <label>Deskripsi<textarea id="fDesc" required placeholder="Tulis deskripsi produk..."></textarea></label>
-    <label>Logo Produk
-      <div class="file-picker"><button type="button" id="productImageBtn" class="btn small">📷 Pilih Foto dari HP</button><span id="productImageName">Belum ada foto</span></div>
-      <div id="productImagePreview" class="product-image-preview hidden"><img id="productImagePreviewImg" alt="Preview produk"></div>
-      <input id="fImageFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
-    </label>
-    <label>Link Tujuan<input id="fLink" type="url" required placeholder="https://t.me/contoh"></label>
-    <div class="two"><label>Urutan<input id="fOrder" type="number" min="0" value="0"></label><label>Status<select id="fActive"><option value="1">Aktif</option><option value="0">Nonaktif</option></select></label></div>
-    <div class="modal-actions"><button type="button" id="cancelBtn" class="btn">Batal</button><button id="saveProductBtn" class="btn primary">Simpan Produk</button></div>
-  </form>
-</div></div>
-<script src="data.js?v=final20261005"></script><script src="admin-v10.js?v=final20261005"></script>
+<div id="modal" class="admin-modal hidden"><div class="admin-modal-box"><div class="modal-head"><div><span class="section-label">KATALOG</span><h2 id="modalTitle">Tambah Katalog</h2></div><button id="closeModal" class="modal-x">×</button></div>
+<form id="productForm"><input type="hidden" id="editId">
+  <label>Nama Katalog<input id="fTitle" required placeholder="WSID | Nomor Virtual"></label>
+  <label>Deskripsi<textarea id="fDesc" required placeholder="Deskripsi katalog..."></textarea></label>
+  <label>Foto Katalog<input id="fImageFile" type="file" accept="image/*"><small class="hint">Pilih langsung dari file HP. Tidak perlu URL.</small></label>
+  <div class="image-inline"><img id="fImagePreview" alt="Preview"><span id="fImageEmpty">Belum memilih foto</span></div>
+  <label>Link Tujuan<input id="fLink" type="url" required placeholder="https://contoh.com"></label>
+  <div class="two"><label>Urutan<input id="fOrder" type="number" min="0" value="0"></label><label>Status<select id="fActive"><option value="1">Aktif</option><option value="0">Nonaktif</option></select></label></div>
+  <div class="modal-actions"><button type="button" id="cancelBtn" class="admin-link">Batal</button><button class="admin-primary">Simpan Katalog</button></div>
+</form></div></div>
+<script src="data.js?v=20261004-final"></script><script src="admin.js?v=20261004-final"></script>
 </body></html>
