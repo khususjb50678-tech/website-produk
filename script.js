@@ -24,10 +24,10 @@ function fmtDesc(t){t=String(t||'').trim();if(!t)return '<p class="d-intro">Tida
   return '<div class="d-item"><span class="e">'+m[0]+'</span><div><b>'+esc(rest.slice(0,k))+'</b><small>'+esc(rest.slice(k).replace(/^\s[—–]\s/,''))+'</small></div></div>';}).join('');}
 let link='';
 function route(){const h=decodeURIComponent(location.hash.slice(1));
- if(h.startsWith('p/')){const p=products.find(x=>x.id===h.slice(2));if(p){$('dTitle').textContent=p.title;$('dDesc').innerHTML=fmtDesc(p.description);link=p.link||'';const i=$('dImg');if(p.image){i.src=p.image;i.classList.remove('hidden');$('dPh').classList.add('hidden');}else{i.classList.add('hidden');$('dPh').classList.remove('hidden');}show('vDet');const d=$('dDesc'),m=$('moreBtn');d.classList.add('collapsed');m.textContent='Selengkapnya ⌄';m.classList.add('hidden');requestAnimationFrame(()=>m.classList.toggle('hidden',!(d.scrollHeight>d.clientHeight+2)));return;}}
+ if(h.startsWith('p/')){const p=products.find(x=>x.id===h.slice(2));if(p){$('dTitle').textContent=p.title;$('dDesc').innerHTML=fmtDesc(p.description);link=p.link||'';const i=$('dImg');if(p.image){i.src=p.image;i.classList.remove('hidden');$('dPh').classList.add('hidden');}else{i.classList.add('hidden');$('dPh').classList.remove('hidden');}show('vDet');$('dDesc').classList.add('hidden');$('dToggle').classList.remove('open');return;}}
  show(h==='kategori'?'vCat':'vHome');}
 addEventListener('hashchange',route);
-$('moreBtn').onclick=()=>{const d=$('dDesc'),o=d.classList.toggle('collapsed');$('moreBtn').textContent=o?'Selengkapnya ⌄':'Tutup ⌃';};
+$('dToggle').onclick=()=>{$('dDesc').classList.toggle('hidden');$('dToggle').classList.toggle('open');};
 $('openProduct').onclick=()=>{if(link)window.open(link,'_blank','noopener');};
 (async()=>{setBrand(await loadSettings());let l=[];try{l=await api('/products?select=id,title,description,image,link,order_num,active&active=eq.true&order=order_num.asc');}catch{}
  if(!l.length)l=FALLBACK.filter(x=>Number(x.active)===1).sort((a,b)=>(a.order||0)-(b.order||0));products=l;render();$('year').textContent=new Date().getFullYear();})();

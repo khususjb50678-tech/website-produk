@@ -3,15 +3,15 @@
 <title>Witama Store.ID — Katalog</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261004-v4"></head>
+<link rel="stylesheet" href="style.css?v=20261004-v6"></head>
 <body class="site-page">
 <svg width="0" height="0" style="position:absolute"><defs><linearGradient id="wg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7a4dff"/><stop offset="1" stop-color="#3f86ff"/></linearGradient></defs><symbol id="w" viewBox="0 0 130 110"><path fill="url(#wg)" d="M6 12h30l15 58 14-38h0l14 38 15-58h30l-33 92H78L65 68 52 104H39z"/></symbol></svg>
 <div id="wall" class="wall"></div>
 <div class="app">
 <!-- BERANDA -->
 <section id="vHome" class="view">
-  <header class="bar"><a class="brand" href="index.html"><span class="brand-logo"><span>W</span></span><b class="brand-name">Witama <i>Store.ID</i></b></a><div class="bar-r"><a class="pill" href="index.html">Lihat Website ↗</a><a class="pill sq" href="#kategori">···</a></div></header>
-  <div class="hero"><div class="hero-art" id="heroArt"><svg viewBox="0 0 130 110"><use href="#w"/></svg></div>
+  <header class="bar"><a class="brand" href="index.html"><span class="brand-logo"><span>W</span></span><b class="brand-name">Witama <i>Store.ID</i></b></a></header>
+  <div class="hero">
     <span class="eyebrow">FAST • SAFE • TRUSTED</span><h1 id="heroTitle">Witama <i>Store.ID</i></h1><p>Solusi digital terbaik untuk kebutuhan online kamu.</p>
     <a class="cta-line" href="#kategori"><span class="cta-ic">➶</span><b>Jelajahi Katalog</b><em>→</em></a></div>
   <div class="sec-head"><b>KATALOG</b><a href="#kategori">Lihat Semua →</a></div>
@@ -19,14 +19,14 @@
 </section>
 <!-- KATEGORI -->
 <section id="vCat" class="view hidden">
-  <header class="bar"><a class="brand" href="index.html"><span class="brand-logo"><span>W</span></span><b class="brand-name">Witama <i>Store.ID</i></b></a><div class="bar-r"><a class="pill" href="index.html">Lihat Website ↗</a><a class="pill sq" href="#">×</a></div></header>
+  <header class="bar"><a class="brand" href="index.html"><span class="brand-logo"><span>W</span></span><b class="brand-name">Witama <i>Store.ID</i></b></a><div class="bar-r"><a class="pill sq" href="#" aria-label="Tutup">×</a></div></header>
   <div class="head-txt"><span class="eyebrow">KATALOG</span><h2>Pilih Kategori<br>Katalog Favoritmu</h2><p>Temukan berbagai layanan digital terbaik hanya di Witama Store.ID.</p></div>
   <div id="catList" class="list"></div>
 </section>
 <!-- DETAIL -->
 <section id="vDet" class="view hidden">
   <header class="bar"><a class="brand" href="index.html"><span class="brand-logo"><span>W</span></span><b class="brand-name">Witama <i>Store.ID</i></b></a><div class="bar-r"><a class="pill sq" href="#kategori" aria-label="Tutup">×</a></div></header>
-  <div class="head-txt"><span class="eyebrow">KATALOG</span><h2 id="dTitle"></h2><div id="dDesc" class="dd collapsed"></div><button id="moreBtn" class="more hidden" type="button">Selengkapnya ⌄</button></div>
+  <div class="head-txt"><button id="dToggle" class="d-toggle" type="button"><h2 id="dTitle"></h2><span>⌄</span></button><div id="dDesc" class="dd hidden"></div></div>
   <div class="d-art neon"><i class="badge">Rekomendasi</i><img id="dImg" alt=""><div id="dPh" class="ph"><svg viewBox="0 0 130 110"><use href="#w"/></svg></div></div>
   <h3 class="d-h">Detail Katalog</h3>
   <div class="feat"><span>◈</span><div><b>Akses Cepat</b><small>Proses langsung dalam hitungan detik</small></div></div>
@@ -36,5 +36,5 @@
 </section>
 <footer><span id="year"></span> <span id="footerBrand">Witama Store.ID</span></footer>
 </div>
-<script src="data.js?v=20261004-v4"></script><script src="script.js?v=20261004-v4"></script>
+<script src="data.js?v=20261004-v6"></script><script src="script.js?v=20261004-v6"></script>
 </body></html>

@@ -51,3 +51,12 @@ label{display:block;font-size:12.5px;color:#c7cae6;font-weight:600;margin:10px 0
 .d-intro{margin:0 0 12px;color:#c7cae6}.d-sub{margin:14px 0 8px;font:700 14px var(--disp);color:#fff}
 .d-item{display:flex;gap:10px;align-items:flex-start;padding:9px 10px;margin-bottom:8px;border:1px solid rgba(120,130,255,.22);border-radius:14px;background:rgba(14,14,40,.55)}
 .d-item .e{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:rgba(90,80,190,.35);flex:none;font-size:16px}.d-item b{display:block;font-size:13px;color:#fff}.d-item small{display:block;color:var(--muted);font-size:12px;line-height:1.45;margin-top:1px}
+
+html,body{overflow-x:hidden;max-width:100%}.app{max-width:100%;overflow-x:clip}
+.admin-item{grid-template-columns:52px minmax(0,1fr)}.admin-item>*,.row>*,.feat>*,.d-item>*{min-width:0}.admin-item-info{overflow:hidden}.admin-item-info small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hero{padding-top:min(32vh,240px)}
+
+.hero{padding-top:6px}
+.d-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:14px 16px;border-radius:18px;border:1px solid rgba(130,130,255,.3);background:rgba(14,14,40,.6);backdrop-filter:blur(10px)}
+.d-toggle h2{margin:0;font:800 22px/1.15 var(--disp);letter-spacing:-.02em;overflow-wrap:anywhere}.d-toggle span{font-size:20px;color:#b9a2ff;transition:transform .2s;flex:none}.d-toggle.open span{transform:rotate(180deg)}
+.dd:not(.hidden){margin-top:14px;animation:in .25s ease}
