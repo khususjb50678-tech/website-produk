@@ -75,3 +75,8 @@ on public.site_settings for update to authenticated using (true) with check (tru
 
 -- Deskripsi beranda yang bisa diedit dari admin
 alter table public.site_settings add column if not exists description text not null default 'Solusi digital terbaik untuk kebutuhan online kamu.';
+
+-- Label kartu & wallpaper kartu (diatur dari admin)
+alter table public.site_settings add column if not exists card_label text not null default 'Credits By Witama Store.ID';
+alter table public.site_settings add column if not exists card_bg text not null default 'aurora';
+alter table public.site_settings add column if not exists card_bg_img text not null default '';

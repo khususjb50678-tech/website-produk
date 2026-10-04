@@ -3,8 +3,9 @@
 <title>Admin — Witama Store.ID</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261004-v16"></head>
-<body class="admin-page"><div class="app">
+<link rel="stylesheet" href="style.css?v=20261004-v17"></head>
+<body class="admin-page"><svg width="0" height="0" style="position:absolute"><defs><linearGradient id="wg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7a4dff"/><stop offset="1" stop-color="#3f86ff"/></linearGradient></defs><symbol id="w" viewBox="0 0 130 110"><path fill="url(#wg)" d="M6 12h30l15 58 14-38h0l14 38 15-58h30l-33 92H78L65 68 52 104H39z"/></symbol></svg>
+<div class="app">
 <div id="loginView" class="view"><div class="panel">
   <a class="brand" href="index.html"><span class="brand-logo"><span>W</span></span><b class="brand-name">Witama <i>Store.ID</i></b></a>
   <div class="head-txt" style="padding:22px 0 8px"><span class="eyebrow">CONTROL CENTER</span><h2>Admin Katalog</h2><p>Kelola katalog dan logo website dari sini.</p></div>
@@ -26,6 +27,12 @@
   <div class="logo-row"><div class="lp big"><img id="largeLogoPreview" alt=""><span id="largeLogoEmpty">W</span></div><label class="up">▣ Pilih Foto<input id="largeLogoFile" type="file" accept="image/*"></label><button id="delLarge" class="trash" aria-label="Hapus">🗑</button></div></div>
  <button id="saveLogos" class="btn-main sm">Simpan Logo</button>
 </section>
+<section class="panel"><h3>Pengaturan Kartu</h3>
+ <div class="sub"><b>Label Kartu</b><small>Tampil di bawah nama katalog. Kosongkan untuk menyembunyikan.</small><input id="fCardLabel" placeholder="Credits By Witama Store.ID"></div>
+ <div class="sub"><b>Wallpaper Kartu</b><small>Pilih bawaan, atau upload foto sendiri.</small><div id="bgChips" class="chips"></div>
+  <div class="logo-row" style="margin-top:10px"><label class="up">▣ Upload Foto<input id="cardBgFile" type="file" accept="image/*"></label><button id="delCardBg" type="button" class="trash" aria-label="Hapus foto">🗑</button></div></div>
+ <div class="sub"><b>Pratinjau</b><div class="grid2"><div class="card neon prev"><span class="ci"><svg viewBox="0 0 130 110"><use href="#w"/></svg></span><div class="ct"><b>Contoh Judul</b><em class="lab" id="prevLab"></em></div><span class="go">→</span></div></div></div>
+ <button id="saveCard" class="btn-main sm">Simpan Perubahan</button></section>
 <section class="panel"><h3>Pengaturan Umum</h3>
  <details class="sub" open><summary><b>Informasi Website</b><small>Edit judul, deskripsi, dan pengaturan lainnya.</small></summary><label>Nama Website<input id="fBrand" placeholder="Witama Store.ID"></label><label>Deskripsi Website (tampil di beranda)<textarea id="fSiteDesc" placeholder="Solusi digital terbaik untuk kebutuhan online kamu."></textarea></label></details>
  <button id="saveGeneral" class="btn-main sm">Simpan Perubahan</button></section>
@@ -38,9 +45,9 @@
  <div class="panel"><label>Nama Katalog<input id="fTitle" required placeholder="Masukkan nama katalog..."></label>
   <label>Deskripsi<textarea id="fDesc" required placeholder="Deskripsi katalog..."></textarea></label>
   <label>Link Tujuan<input id="fLink" type="url" required placeholder="https://contoh.com"></label>
-  <label>Urutan<input id="fOrder" type="number" min="0" value="0"></label></div>
+  </div>
  <div class="panel"><b>Foto Katalog</b><label class="drop"><img id="fImagePreview" alt=""><span id="fImageEmpty"><i>⇪</i><b>Pilih Foto</b><small>Tekan untuk memilih dari galeri</small></span><input id="fImageFile" type="file" accept="image/*"></label></div>
  <div class="panel sw"><b>Status</b><label class="switch"><input type="checkbox" id="fActive" checked><i></i></label></div>
  <button class="btn-main">▣ Simpan</button></form></div></div>
 </div>
-<script src="data.js?v=20261004-v16"></script><script src="admin.js?v=20261004-v16"></script></body></html>
+<script src="data.js?v=20261004-v17"></script><script src="admin.js?v=20261004-v17"></script></body></html>
