@@ -22,3 +22,6 @@ Versi ini sengaja **tidak menggunakan Supabase Storage**. Foto dari HP otomatis 
 - Jika browser masih menampilkan versi lama, buka dalam mode incognito atau lakukan hard refresh.
 
 V14: memperbaiki Supabase anon key pada script publik dan cache-bust v14.
+
+
+V15 bugfix: cache branding/katalog, logo tampil tanpa menunggu request, gambar katalog diambil dalam satu request, dan splash tidak lagi memaksa loading lama.
