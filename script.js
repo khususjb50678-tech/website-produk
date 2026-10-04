@@ -34,7 +34,7 @@ function setPct(v,t){pct=Math.max(pct,Math.min(100,v));$('spFill').style.width=p
 function splashBrand(b,logo){const h=esc(b).replace(/Store\.ID/i,'<i>Store.ID</i>');$('spBrand').innerHTML=h;if(logo)$('spLogo').innerHTML=`<img src="${esc(logo)}" alt="">`;}
 try{const c=JSON.parse(localStorage.getItem('witama_splash')||'null');if(c)splashBrand(c.brand||'Witama Store.ID',c.logo);}catch{}
 const tick=setInterval(()=>setPct(pct+(90-pct)*.07),120),failsafe=setTimeout(hideSplash,9000);
-function hideSplash(){clearInterval(tick);clearTimeout(failsafe);setPct(100,'Selesai');setTimeout(()=>{$('splash').classList.add('out');setTimeout(()=>$('splash').remove(),700);},350);}
+function hideSplash(){clearInterval(tick);clearTimeout(failsafe);setPct(100,'Selesai');setTimeout(()=>{$('splash').classList.add('out');setTimeout(()=>$('splash').remove(),950);},350);}
 (async()=>{const st=await loadSettings();setBrand(st);setPct(45,'Memuat katalog...');
  try{localStorage.setItem('witama_splash',JSON.stringify({brand:st?.brand||'Witama Store.ID',logo:st?.logo_small||''}));}catch{}
  let l=[];try{l=await api('/products?select=id,title,description,image,link,order_num,active&active=eq.true&order=order_num.asc');}catch{}
