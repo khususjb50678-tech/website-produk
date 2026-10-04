@@ -30,6 +30,11 @@ async function readError(res){
   if(/rate limit/i.test(raw+code))return "Terlalu banyak percobaan. Tunggu beberapa menit.";
   return (raw||"HTTP "+res.status)+(code?" ("+code+")":"");
 }
+async function authLogin(email,password){
+  const res=await fetchT(AUTH+"/token?grant_type=password",{method:"POST",headers:headers(),body:JSON.stringify({email,password})});
+  if(!res.ok)throw new Error(await readError(res));
+  return res.json();
+}
 async function authRefresh(refresh_token){
   const res=await fetchT(AUTH+"/token?grant_type=refresh_token",{method:"POST",headers:headers(),body:JSON.stringify({refresh_token})});
   if(!res.ok)throw new Error(await readError(res));
