@@ -20,3 +20,5 @@ Versi ini sengaja **tidak menggunakan Supabase Storage**. Foto dari HP otomatis 
 - Jangan mengganti anon/publishable key dengan service_role/secret key.
 - Jika project Supabase baru saja dibuat/diubah, tunggu sebentar lalu refresh GitHub Pages.
 - Jika browser masih menampilkan versi lama, buka dalam mode incognito atau lakukan hard refresh.
+
+V14: memperbaiki Supabase anon key pada script publik dan cache-bust v14.
