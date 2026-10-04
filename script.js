@@ -1,5 +1,5 @@
-const SB_URL = "PASTE_SUPABASE_URL_HERE";
-const SB_ANON_KEY = "PASTE_SUPABASE_ANON_KEY_HERE";
+const SB_URL = "https://ozsfnvzqtizptxymtxzf.supabase.co";
+const SB_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im96c2ZudnpxdGl6cHR4eW10eHpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwNjIzMjksImV4cCI6MjEwNjYzODMyOX0.2TuFxRzKL4aHjRsFNyVsG3-LPn4UGre64NzhnT7W1Po";
 const supabase = window.supabase.createClient(SB_URL, SB_ANON_KEY);
 const FALLBACK = window.DEFAULT_PRODUCTS || [];
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
