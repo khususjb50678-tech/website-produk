@@ -68,3 +68,34 @@ html,body{overflow-x:hidden;max-width:100%}.app{max-width:100%;overflow-x:clip}
 .site-page .bar{background:none;border:0;backdrop-filter:none;padding:0 2px;margin-bottom:16px;justify-content:space-between}
 .site-page .brand{gap:14px}.site-page .brand-logo{width:76px;height:76px;border-radius:22px}.site-page .brand-logo span{font-size:38px}
 .site-page .brand-name{font-size:21px;letter-spacing:-.02em;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+
+/* splash */
+.splash{position:fixed;inset:0;z-index:200;display:grid;place-items:center;overflow:hidden;background:radial-gradient(ellipse at 50% 36%,#1a1250,#07071c 72%);transition:opacity .5s,visibility .5s}.splash.out{opacity:0;visibility:hidden}
+.sp-core{width:min(80%,340px);display:flex;flex-direction:column;align-items:center;text-align:center;position:relative}
+.sp-ring{position:relative;width:240px;height:240px;display:grid;place-items:center;margin-bottom:16px}
+.sp-glow{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(110,90,255,.38),rgba(63,134,255,.08) 70%);animation:pulse 2.4s ease-in-out infinite}
+.sp-dash{position:absolute;inset:18px;border-radius:50%;border:2px dashed rgba(140,150,255,.55);animation:rot 16s linear infinite}
+.sp-arc{position:absolute;inset:30px;border-radius:50%;border:4px solid transparent;border-top-color:#6f8bff;border-left-color:#8a5cff;animation:rot 1.6s linear infinite}
+.sp-dot{position:absolute;inset:18px;border-radius:50%;animation:rot 3.4s linear infinite}.sp-dot:after{content:"";position:absolute;right:-6px;top:50%;width:12px;height:12px;margin-top:-6px;border-radius:50%;background:#7a9bff;box-shadow:0 0 14px #7a9bff}
+.sp-logo{position:relative;z-index:2;width:130px;height:130px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:var(--grad);border:4px solid rgba(255,255,255,.2);box-shadow:0 0 44px rgba(110,90,255,.6)}.sp-logo img{width:100%;height:100%;object-fit:cover}.sp-logo span{font:800 56px var(--disp)}
+.sp-pill{padding:9px 24px;border-radius:99px;border:1px solid rgba(140,150,255,.4);background:rgba(30,32,80,.5);font-size:13px;letter-spacing:.22em;font-weight:800;color:#b9c4ff}
+.splash h2{font:800 30px/1.1 var(--disp);letter-spacing:-.03em;margin:14px 0 22px}.splash h2 i{background:linear-gradient(90deg,#b678ff,#7a9bff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sp-bar{width:100%;height:12px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}.sp-bar b{display:block;height:100%;width:0;border-radius:99px;background:var(--grad);transition:width .35s ease}
+.sp-meta{display:flex;justify-content:space-between;width:100%;margin-top:12px;font-size:14px;color:#9aa0c0}
+.sp{position:absolute;border:2px solid rgba(120,130,255,.35);animation:float 6s ease-in-out infinite}.sp1{width:56px;height:56px;border-radius:18px;right:12%;top:20%}.sp2{width:44px;height:44px;border-radius:14px;border-style:dashed;left:9%;bottom:24%;animation-delay:-2s}.sp3{width:190px;height:190px;border-radius:50%;border-style:dashed;right:-30px;bottom:6%;animation-delay:-3.5s}
+@keyframes rot{to{transform:rotate(360deg)}}@keyframes pulse{50%{transform:scale(1.07);opacity:.7}}@keyframes float{50%{transform:translateY(-14px)}}
+/* logo neon + sway */
+.site-page .brand-logo:before{display:none}.site-page .brand-logo{box-shadow:0 0 20px rgba(80,120,255,.5)}
+@keyframes sway{0%,100%{transform:rotate(-1.4deg) translateY(0)}50%{transform:rotate(1.4deg) translateY(-5px)}}
+.site-page .brand-logo,.card.neon{animation:spin 3.2s linear infinite,sway 4s ease-in-out infinite}
+.card.neon:nth-child(2n){animation-delay:0s,-1.3s}.card.neon:nth-child(3n){animation-delay:0s,-2.4s}.card.neon:nth-child(5n){animation-delay:0s,-.7s}
+@media (prefers-reduced-motion:reduce){.site-page .brand-logo,.card.neon{animation:spin 3.2s linear infinite}.sp,.sp-glow{animation:none}}
+/* footer */
+.foot{margin-top:34px;padding:22px 8px 6px;border-top:1px solid rgba(130,140,255,.25);text-align:center;color:#9aa0c0;font-size:13px;line-height:1.6}.foot b{background:linear-gradient(90deg,#b678ff,#7a9bff);-webkit-background-clip:text;background-clip:text;color:transparent}
+/* goyang lebih kuat */
+@keyframes sway{0%,100%{transform:rotate(-3deg) translateY(0)}50%{transform:rotate(3deg) translateY(-9px) scale(1.02)}}
+@keyframes swayLogo{0%,100%{transform:rotate(-6deg) translateY(0)}50%{transform:rotate(6deg) translateY(-8px) scale(1.04)}}
+.card.neon{animation:spin 3.2s linear infinite,sway 3.2s ease-in-out infinite}
+.site-page .brand-logo{animation:spin 3.2s linear infinite,swayLogo 3s ease-in-out infinite}
+.grid2{gap:16px}
+@media (prefers-reduced-motion:reduce){.site-page .brand-logo,.card.neon{animation:spin 3.2s linear infinite}}

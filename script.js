@@ -5,7 +5,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 const W='<svg viewBox="0 0 130 110"><use href="#w"/></svg>';
 async function api(p){const r=await fetch(API+p,{headers:{apikey:SB_ANON_KEY,Accept:'application/json'}});if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}
 let products=[];
-function setBrand(s){const b=s?.brand||'Witama Store.ID',h=esc(b).replace(/Store\.ID/i,'<i>Store.ID</i>');document.querySelectorAll('.brand-name').forEach(e=>e.innerHTML=h);document.title=b+' — Katalog';if(s?.description)$('homeDesc').textContent=s.description;
+function setBrand(s){const b=s?.brand||'Witama Store.ID',h=esc(b).replace(/Store\.ID/i,'<i>Store.ID</i>');document.querySelectorAll('.brand-name').forEach(e=>e.innerHTML=h);document.title=b+' — Katalog';$('footBrand').textContent=b;$('yr').textContent=new Date().getFullYear();splashBrand(b,s?.logo_small);if(s?.description)$('homeDesc').textContent=s.description;
  document.querySelectorAll('.brand-logo').forEach(e=>e.innerHTML=s?.logo_small?`<img src="${esc(s.logo_small)}" alt="">`:'<span>W</span>');
  if(s?.logo_large){$('wall').style.backgroundImage='url("'+s.logo_large+'")';document.body.classList.add('has-wall');}}
 async function loadSettings(){for(const c of ['brand,logo_small,logo_large,description','brand,logo_small,logo_large']){try{return (await api('/site_settings?select='+c+'&id=eq.1'))?.[0]||window.DEFAULT_SETTINGS;}catch{}}return window.DEFAULT_SETTINGS;}
@@ -29,5 +29,14 @@ addEventListener('hashchange',route);addEventListener('popstate',route);
 document.querySelectorAll('[data-home]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();history.pushState(null,'',location.pathname+location.search);route();}));
 $('dToggle').onclick=()=>{$('dDesc').classList.toggle('hidden');$('dToggle').classList.toggle('open');};
 $('openProduct').onclick=()=>{if(link)window.open(link,'_blank','noopener');};
-(async()=>{setBrand(await loadSettings());let l=[];try{l=await api('/products?select=id,title,description,image,link,order_num,active&active=eq.true&order=order_num.asc');}catch{}
- if(!l.length)l=FALLBACK.filter(x=>Number(x.active)===1).sort((a,b)=>(a.order||0)-(b.order||0));products=l;render();})();
+const t0=Date.now();let pct=0;
+function setPct(v,t){pct=Math.max(pct,Math.min(100,v));$('spFill').style.width=pct+'%';$('spPct').textContent=Math.round(pct)+'%';if(t)$('spText').textContent=t;}
+function splashBrand(b,logo){const h=esc(b).replace(/Store\.ID/i,'<i>Store.ID</i>');$('spBrand').innerHTML=h;if(logo)$('spLogo').innerHTML=`<img src="${esc(logo)}" alt="">`;}
+try{const c=JSON.parse(localStorage.getItem('witama_splash')||'null');if(c)splashBrand(c.brand||'Witama Store.ID',c.logo);}catch{}
+const tick=setInterval(()=>setPct(pct+(90-pct)*.07),120),failsafe=setTimeout(hideSplash,9000);
+function hideSplash(){clearInterval(tick);clearTimeout(failsafe);setPct(100,'Selesai');setTimeout(()=>{$('splash').classList.add('out');setTimeout(()=>$('splash').remove(),700);},350);}
+(async()=>{const st=await loadSettings();setBrand(st);setPct(45,'Memuat katalog...');
+ try{localStorage.setItem('witama_splash',JSON.stringify({brand:st?.brand||'Witama Store.ID',logo:st?.logo_small||''}));}catch{}
+ let l=[];try{l=await api('/products?select=id,title,description,image,link,order_num,active&active=eq.true&order=order_num.asc');}catch{}
+ if(!l.length)l=FALLBACK.filter(x=>Number(x.active)===1).sort((a,b)=>(a.order||0)-(b.order||0));products=l;render();setPct(80,'Menyiapkan tampilan...');
+ setTimeout(hideSplash,Math.max(0,1500-(Date.now()-t0)));})();
