@@ -10,12 +10,13 @@ const defaults = {user:"admin", brand:"TAMA STORE"};
 function esc(s){return String(s ?? "").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
 function showLoginError(t){const el=$("loginError"); if(el){el.textContent=t;el.className="notice error";}}
 function notice(t,error=false){const el=$("notice");if(!el)return;el.textContent=t;el.className="notice "+(error?"error":"success");setTimeout(()=>el.classList.add("hidden"),4500);}
+const nativeFetch=window.fetch.bind(window);
 async function fetchT(url,opts={},ms=15000){
   const ctrl=new AbortController();const timer=setTimeout(()=>ctrl.abort(),ms);
-  try{return await fetchT(url,{...opts,signal:ctrl.signal});}
+  try{return await nativeFetch(url,{...opts,signal:ctrl.signal});}
   catch(e){
-    if(e?.name==="AbortError")throw new Error("Koneksi ke Supabase terlalu lama (timeout). Cek internet kamu, atau project Supabase mungkin sedang paused.");
-    throw new Error("Tidak bisa terhubung ke Supabase. Cek internet (matikan mode pesawat/VPN/adblock) atau pastikan project Supabase tidak paused.");
+    if(e?.name==="AbortError")throw new Error("Koneksi ke Supabase terlalu lama (timeout). Cek internet, atau project Supabase mungkin paused.");
+    throw new Error("Tidak bisa terhubung ke Supabase ["+(e?.name||"Error")+": "+(e?.message||"-")+"]");
   }finally{clearTimeout(timer);}
 }
 function headers(token=null){return {"apikey":SB_ANON_KEY,"Content-Type":"application/json",...(token?{"Authorization":"Bearer "+token}:{})};}
@@ -23,17 +24,11 @@ async function readError(res){
   let body=null;try{body=await res.json();}catch{}
   const code=body?.error_code||body?.code||"";
   const raw=body?.msg||body?.message||body?.error_description||body?.hint||body?.details||"";
-  if(code==="invalid_credentials"||/invalid login credentials/i.test(raw))return "Email atau password salah. (Pastikan user ini ada di Supabase → Authentication → Users)";
-  if(code==="email_not_confirmed"||/not confirmed/i.test(raw))return "Email belum dikonfirmasi. Di Supabase → Authentication → Users, klik user lalu konfirmasi email (atau matikan 'Confirm email').";
-  if(/invalid api key|no api key/i.test(raw)||res.status===401&&/apikey/i.test(raw))return "API key Supabase tidak valid. Cek SB_ANON_KEY di admin.js dan script.js.";
-  if(/over_request_rate_limit|rate limit/i.test(raw+code))return "Terlalu banyak percobaan login. Tunggu beberapa menit lalu coba lagi.";
-  return (raw||`HTTP ${res.status}`)+(code?` (${code})`:"");
-}
-
-async function authLogin(email,password){
-  const res=await fetchT(AUTH+"/token?grant_type=password",{method:"POST",headers:headers(),body:JSON.stringify({email,password})});
-  if(!res.ok)throw new Error(await readError(res));
-  return res.json();
+  if(code==="invalid_credentials"||/invalid login credentials/i.test(raw))return "Email atau password salah.";
+  if(code==="email_not_confirmed"||/not confirmed/i.test(raw))return "Email belum dikonfirmasi. Supabase → Authentication → Users → konfirmasi user tersebut.";
+  if(/invalid api key|no api key/i.test(raw))return "API key Supabase tidak valid.";
+  if(/rate limit/i.test(raw+code))return "Terlalu banyak percobaan. Tunggu beberapa menit.";
+  return (raw||"HTTP "+res.status)+(code?" ("+code+")":"");
 }
 async function authRefresh(refresh_token){
   const res=await fetchT(AUTH+"/token?grant_type=refresh_token",{method:"POST",headers:headers(),body:JSON.stringify({refresh_token})});
@@ -41,13 +36,14 @@ async function authRefresh(refresh_token){
   return res.json();
 }
 async function authUser(token){
-  const res=await fetchT(AUTH+"/user",{headers:{"apikey":SB_ANON_KEY,"Authorization":"Bearer "+token}},8000);
+  const res=await fetchT(AUTH+"/user",{headers:{"apikey":SB_ANON_KEY,"Authorization":"Bearer "+token}});
   if(!res.ok)throw new Error(await readError(res));
   return res.json();
 }
-function saveSession(data){session=data;localStorage.setItem("tama_admin_session",JSON.stringify(data));if(data?.user?.email)localStorage.setItem("tama_admin_auth_email",data.user.email);}
+function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v);}catch{return null;}}
+function saveSession(data){session=data;ls("tama_admin_session",JSON.stringify(data));if(data?.user?.email)ls("tama_admin_auth_email",data.user.email);}
 async function restoreSession(){
-  const raw=localStorage.getItem("tama_admin_session");if(!raw)return false;
+  const raw=ls("tama_admin_session");if(!raw)return false;
   try{
     let s=JSON.parse(raw);
     if(!s?.access_token)return false;
@@ -56,7 +52,7 @@ async function restoreSession(){
       if(!s.refresh_token)throw new Error("Sesi login sudah berakhir.");
       const fresh=await authRefresh(s.refresh_token);saveSession(fresh);return true;
     }
-  }catch(e){localStorage.removeItem("tama_admin_session");localStorage.removeItem("tama_admin_auth_email");return false;}
+  }catch(e){ls("tama_admin_session",null);ls("tama_admin_auth_email",null);return false;}
 }
 async function db(path,options={}){
   const res=await fetchT(API+path,{...options,headers:{...headers(session?.access_token),...(options.headers||{})}});
@@ -86,12 +82,12 @@ async function login(){
   const btn=$("loginBtn");if(btn){btn.disabled=true;btn.textContent="Memproses...";}
   try{
     $("loginError").className="notice error hidden";
-    const info=$("loginInfo");if(info){info.textContent="Menghubungkan ke Supabase...";info.classList.remove("hidden");}
+    const info=$("loginInfo");info.textContent="Menghubungkan ke Supabase...";info.classList.remove("hidden");
     const identifier=$("loginUser").value.trim();const password=$("loginPass").value;
     if(!identifier||!password){showLoginError("Email dan password wajib diisi.");return;}
     let email=identifier;
     if(!identifier.includes("@")){
-      const stored=localStorage.getItem("tama_admin_auth_email");
+      const stored=ls("tama_admin_auth_email");
       if(!stored){showLoginError("Login pertama wajib memakai email akun Supabase. Setelah berhasil, username bisa dipakai di perangkat ini.");return;}
       email=stored;
     }
@@ -99,7 +95,7 @@ async function login(){
     if(!data?.access_token){showLoginError("Supabase tidak memberikan sesi login.");return;}
     saveSession(data);await showAdmin();
   }catch(e){showLoginError("Login gagal: "+e.message);}
-  finally{const info=$("loginInfo");if(info)info.classList.add("hidden");if(btn){btn.disabled=false;btn.textContent="Masuk";}}
+  finally{$("loginInfo").classList.add("hidden");if(btn){btn.disabled=false;btn.textContent="Masuk";}}
 }
 async function loadSettings(){const s=await getSettings();$("brandInput").value=s.brand||defaults.brand;$("settingsUser").value=s.username||defaults.user;}
 async function renderAdmin(){
@@ -115,20 +111,15 @@ async function deleteProduct(id){if(!confirm("Hapus produk ini?"))return;try{awa
 
 function bindEvents(){
   $("loginForm").addEventListener("submit",e=>{e.preventDefault();login();});
-  $("logoutBtn").addEventListener("click",()=>{session=null;localStorage.removeItem("tama_admin_session");localStorage.removeItem("tama_admin_auth_email");location.reload();});
+  $("logoutBtn").addEventListener("click",()=>{session=null;ls("tama_admin_session",null);ls("tama_admin_auth_email",null);location.reload();});
   $("addBtn").addEventListener("click",()=>openModal());$("closeModal").addEventListener("click",closeModal);$("cancelBtn").addEventListener("click",closeModal);
   $("productForm").addEventListener("submit",async e=>{e.preventDefault();try{const editing=!!$("editId").value;const id=$("editId").value||crypto.randomUUID();const item={id,title:$("fTitle").value.trim(),description:$("fDesc").value.trim(),image:$("fImage").value.trim(),link:$("fLink").value.trim(),order_num:+$("fOrder").value||0,active:+$("fActive").value===1};if(editing)await db(`/products?id=eq.${encodeURIComponent(id)}`,{method:"PATCH",headers:{"Prefer":"return=minimal"},body:JSON.stringify(item)});else await db('/products',{method:"POST",headers:{"Prefer":"return=minimal"},body:JSON.stringify(item)});closeModal();await renderAdmin();notice(editing?"Produk diperbarui.":"Produk ditambahkan.");}catch(e){notice("Gagal menyimpan: "+e.message,true);}});
   $("saveSettings").addEventListener("click",async()=>{try{const brand=$("brandInput").value.trim()||defaults.brand;const username=$("settingsUser").value.trim()||defaults.user;await db('/site_settings?on_conflict=id',{method:"POST",headers:{"Prefer":"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({id:1,brand,username})});notice("Pengaturan tersimpan di Supabase.");}catch(e){notice("Gagal menyimpan: "+e.message,true);}});
 }
 
-window.addEventListener("error",e=>{showLoginError("Error script: "+(e.message||e));});
-window.addEventListener("unhandledrejection",e=>{showLoginError("Error: "+(e.reason?.message||e.reason||"tidak diketahui"));});
-async function checkConnection(){
-  try{const r=await fetchT(AUTH+"/settings",{headers:{"apikey":SB_ANON_KEY}},8000);
-    if(!r.ok)showLoginError("Supabase merespons error: "+await readError(r));}
-  catch(e){showLoginError(e.message);}
-}
 (async function boot(){
-  try{bindEvents();checkConnection();if(await restoreSession())await showAdmin();}
+  try{bindEvents();$("loginUser").value=ls("tama_admin_auth_email")||"";if(await restoreSession())await showAdmin();}
   catch(e){showLoginError("Admin gagal dijalankan: "+(e?.message||e));}
 })();
+
+window.addEventListener("unhandledrejection",e=>showLoginError("Error: "+(e.reason?.message||e.reason)));
