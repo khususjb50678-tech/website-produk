@@ -28,3 +28,6 @@ Jika Supabase kamu memakai pengaturan Data API exposure manual, expose tabel:
 - `public.site_settings`
 
 Jangan mengganti anon/publishable key dengan service role key di file website.
+
+
+Update: Foto/logo dipilih langsung dari file HP dan diunggah ke Supabase Storage bucket `media`. Jika bucket belum ada, jalankan `supabase.sql` sekali. Wallpaper besar digunakan sebagai background penuh halaman utama.
