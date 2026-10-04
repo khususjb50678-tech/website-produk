@@ -13,7 +13,7 @@
 <header class="store-nav">
   <div class="app-shell nav-shell">
     <a class="brand" href="#top"><span class="logo-mark" id="navLogo"><span>W</span></span><b id="brandName">Witama <i>Store.ID</i></b></a>
-    <div class="nav-actions"><a class="nav-home active" href="#top">Beranda</a><button id="navBack" class="nav-home back-nav" type="button">← Kembali</button></div>
+    <div class="nav-actions"><a class="nav-home active" href="#top">Beranda</a></div>
   </div>
 </header>
 
@@ -25,32 +25,24 @@
       <p>Produk digital pilihan dalam satu tempat. Pilih produk, lihat detailnya, lalu lanjut ke link tujuan.</p>
       <a class="btn primary hero-btn" href="#produk">Lihat Produk <b>↓</b></a>
     </div>
-    <div class="hero-brand-card">
-      <div class="hero-noise"></div>
-      <img id="heroLogo" class="hero-logo" alt="Witama Store.ID">
-      <span id="heroLogoEmpty" class="hero-logo-empty">W</span>
-      <div class="hero-brand-name" id="heroBrandName">Witama Store.ID</div>
-      <small>FAST · SAFE · TRUSTED</small>
-    </div>
+
   </section>
 
   <section id="produk" class="products-section">
-    <div class="section-head"><div><span class="eyebrow">KATALOG</span><h2>Produk</h2><p>Pilih kartu untuk melihat detail.</p></div><span id="count" class="count">0 produk</span></div>
+    <div class="section-head"><div><span class="eyebrow">KATALOG</span></div><span id="count" class="count">0 produk</span></div>
     <div id="productGrid" class="product-grid"></div>
     <div id="empty" class="empty hidden">Belum ada produk aktif.</div>
   </section>
 
-  <section class="trust-card"><div class="trust-icon">✦</div><div><b>Witama Store.ID</b><p>Katalog simpel untuk menemukan layanan dengan cepat.</p></div></section>
-</main>
+  </main>
 <footer><div class="app-shell"><b id="footerBrand">Witama Store.ID</b><span>Fast · Safe · Trusted</span></div></footer>
 
 <div id="detailModal" class="modal hidden"><div class="detail-box">
-  <button id="detailClose" class="close-btn detail-close">×</button>
+  <button id="detailClose" class="close-btn detail-close" type="button" aria-label="Tutup">×</button>
   <div class="detail-image-wrap"><img id="detailImage" alt="Logo produk"><span id="detailImageFallback">✦</span></div>
   <span class="eyebrow">DETAIL PRODUK</span>
   <h2 id="detailTitle">Produk</h2>
   <p id="detailDesc"></p>
-  <button id="detailBack" class="btn back-btn" type="button">← Kembali</button>
   <a id="detailOpen" class="btn primary full" href="#" target="_blank" rel="noopener noreferrer">Buka Produk ↗</a>
 </div></div>
 <script src="data.js?v=final20261005"></script><script src="script.js?v=final20261005"></script>

@@ -31,3 +31,7 @@ Jangan mengganti anon/publishable key dengan service role key di file website.
 
 
 Update: Foto/logo dipilih langsung dari file HP dan diunggah ke Supabase Storage bucket `media`. Jika bucket belum ada, jalankan `supabase.sql` sekali. Wallpaper besar digunakan sebagai background penuh halaman utama.
+
+
+### Perbaikan upload foto
+Versi ini menghindari mode upsert saat upload file baru sehingga upload tidak membutuhkan policy update tambahan. Jika sebelumnya muncul `row-level security policy (AccessDenied)`, jalankan ulang `supabase.sql` sekali di Supabase SQL Editor agar policy Storage `media` diperbarui.

@@ -59,6 +59,8 @@ create policy "authenticated can update settings" on public.site_settings for up
 -- Admin yang login boleh upload / update / delete file.
 drop policy if exists "authenticated media upload" on storage.objects;
 create policy "authenticated media upload" on storage.objects for insert to authenticated with check (bucket_id = 'media');
+drop policy if exists "authenticated media read" on storage.objects;
+create policy "authenticated media read" on storage.objects for select to authenticated using (bucket_id = 'media');
 drop policy if exists "authenticated media update" on storage.objects;
 create policy "authenticated media update" on storage.objects for update to authenticated using (bucket_id = 'media') with check (bucket_id = 'media');
 drop policy if exists "authenticated media delete" on storage.objects;
