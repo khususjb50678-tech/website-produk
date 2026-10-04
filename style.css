@@ -103,8 +103,3 @@ html,body{overflow-x:hidden;max-width:100%}.app{max-width:100%;overflow-x:clip}
 .card .ci img{width:100%;height:100%;object-fit:cover}.card .ci svg{width:44%}
 .card .ci:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 48%,rgba(4,4,20,.88))}
 .card b{position:absolute;left:14px;right:58px;bottom:14px;z-index:2;padding:0;font-size:14px;line-height:1.25;text-shadow:0 2px 10px rgba(0,0,0,.8)}.card .go{z-index:2}
-
-/* v16 stability: never block the catalog because a remote image/API is slow */
-.sp-logo:empty,.brand-logo:empty{background:linear-gradient(135deg,#15132f,#09091b);}
-.sp-logo img,.brand-logo img{display:block;width:100%;height:100%;object-fit:cover;}
-@media (prefers-reduced-motion:reduce){.splash{transition:none}}
