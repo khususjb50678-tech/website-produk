@@ -25,3 +25,6 @@ V14: memperbaiki Supabase anon key pada script publik dan cache-bust v14.
 
 
 V15 bugfix: cache branding/katalog, logo tampil tanpa menunggu request, gambar katalog diambil dalam satu request, dan splash tidak lagi memaksa loading lama.
+
+
+V16 bugfix: splash tidak bisa stuck lagi, API timeout dipercepat, cache ditampilkan dulu, dan logo custom tidak lagi flash ke huruf W saat loading.

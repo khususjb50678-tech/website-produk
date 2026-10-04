@@ -6,7 +6,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 const W='<svg viewBox="0 0 130 110"><use href="#w"/></svg>';
 function readCache(k,fallback=null){try{const v=localStorage.getItem(k);return v?JSON.parse(v):fallback;}catch{return fallback;}}
 function writeCache(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
-async function api(path,opts={}){const c=new AbortController(),t=setTimeout(()=>c.abort(),12000);try{const r=await fetch(API+path,{...opts,signal:c.signal,headers:{apikey:SB_ANON_KEY,Accept:'application/json',...(opts.headers||{})}});if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}finally{clearTimeout(t);}}
+async function api(path,opts={}){const c=new AbortController(),t=setTimeout(()=>c.abort(),5000);try{const r=await fetch(API+path,{...opts,signal:c.signal,headers:{apikey:SB_ANON_KEY,Accept:'application/json',...(opts.headers||{})}});if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}finally{clearTimeout(t);}}
 let products=[];
 function cleanProduct(p){if(!p||typeof p!=='object')return null;const id=String(p.id??'').trim();const title=String(p.title??'').trim();if(!id||!title)return null;return{...p,id,title,description:String(p.description??''),link:String(p.link??''),order_num:Number.isFinite(Number(p.order_num))?Number(p.order_num):0,active:p.active===true||p.active===1||p.active==='true',image:typeof p.image==='string'?p.image:''};}
 function applyLogo(el,url,fallback=''){
@@ -14,10 +14,9 @@ function applyLogo(el,url,fallback=''){
   el.innerHTML='';
   if(url){
     const img=new Image();
-    img.alt='';
-    img.decoding='async';
+    img.alt=''; img.decoding='async'; img.loading='eager';
     img.onload=()=>{el.innerHTML='';el.appendChild(img);};
-    img.onerror=()=>{el.innerHTML=fallback;};
+    img.onerror=()=>{el.innerHTML=fallback||'';};
     img.src=url;
   }else el.innerHTML=fallback;
 }
@@ -31,7 +30,7 @@ function setBrand(s){
   if($('yr'))$('yr').textContent=new Date().getFullYear();
   splashBrand(brand,s.logo_small||'');
   if($('homeDesc'))$('homeDesc').textContent=s.description||'Solusi digital terbaik untuk kebutuhan online kamu.';
-  document.querySelectorAll('.brand-logo').forEach(e=>applyLogo(e,s.logo_small||'','<span>W</span>'));
+  document.querySelectorAll('.brand-logo').forEach(e=>applyLogo(e,s.logo_small||'',''));
   const wall=$('wall');
   if(wall){
     if(s.logo_large){
@@ -81,7 +80,7 @@ function setPct(v,t){pct=Math.max(pct,Math.min(100,v));if($('spFill'))$('spFill'
 function splashBrand(b,logo){
   const h=esc(b||'Witama Store.ID').replace(/Store\.ID/i,'<i>Store.ID</i>');
   if($('spBrand'))$('spBrand').innerHTML=h;
-  if(logo)applyLogo($('spLogo'),logo,'<span>W</span>');
+  if(logo)applyLogo($('spLogo'),logo,''); else $('spLogo').innerHTML='';
 }
 (function hydrateCache(){
   const cs=readCache(CACHE_SETTINGS,null);
@@ -96,7 +95,7 @@ function splashBrand(b,logo){
 const cachedSplash=readCache(CACHE_SETTINGS,null);
 if(cachedSplash)splashBrand(cachedSplash.brand||'Witama Store.ID',cachedSplash.logo_small||'');
 const tick=setInterval(()=>setPct(pct+(90-pct)*.08),90);
-const failsafe=setTimeout(hideSplash,7000);
+const failsafe=setTimeout(hideSplash,3200);
 function hideSplash(){
   clearInterval(tick);clearTimeout(failsafe);setPct(100,'Selesai');
   setTimeout(()=>{$('splash')?.classList.add('out');setTimeout(()=>$('splash')?.remove(),650);},120);
@@ -110,7 +109,7 @@ function hideSplash(){
     products=await loadProducts();
     render();
     setPct(92,'Selesai...');
-    setTimeout(hideSplash,180);
+    setTimeout(hideSplash,80);
   }catch(e){
     console.error(e);
     const cached=readCache(CACHE_PRODUCTS,[]);
