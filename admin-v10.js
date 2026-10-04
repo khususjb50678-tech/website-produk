@@ -1,150 +1,39 @@
-const SB_URL = "https://ozsfnvzqtizptxymtxzf.supabase.co";
-const SB_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im96c2ZudnpxdGl6cHR4eW10eHpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwNjIzMjksImV4cCI6MjEwNjYzODMyOX0.2TuFxRzKL4aHjRsFNyVsG3-LPn4UGre64NzhnT7W1Po";
-const API = SB_URL + "/rest/v1";
-const AUTH = SB_URL + "/auth/v1";
-const $ = id => document.getElementById(id);
-let session = null;
-let productsCache = [];
-const defaults = {user:"admin", brand:"TAMA STORE"};
-
-function esc(s){return String(s ?? "").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
-function showLoginError(t){const el=$("loginError"); if(el){el.textContent=t;el.className="notice error";}}
-function notice(t,error=false){const el=$("notice");if(!el)return;el.textContent=t;el.className="notice "+(error?"error":"success");setTimeout(()=>el.classList.add("hidden"),4500);}
-const nativeFetch=window.fetch.bind(window);
-async function fetchT(url,opts={},ms=15000){
-  const ctrl=new AbortController();const timer=setTimeout(()=>ctrl.abort(),ms);
-  try{return await nativeFetch(url,{...opts,signal:ctrl.signal});}
-  catch(e){
-    if(e?.name==="AbortError")throw new Error("Koneksi ke Supabase terlalu lama (timeout). Cek internet, atau project Supabase mungkin paused.");
-    throw new Error("Tidak bisa terhubung ke Supabase ["+(e?.name||"Error")+": "+(e?.message||"-")+"]");
-  }finally{clearTimeout(timer);}
-}
-function headers(token=null){return {"apikey":SB_ANON_KEY,"Content-Type":"application/json",...(token?{"Authorization":"Bearer "+token}:{})};}
-async function readError(res){
-  let body=null;try{body=await res.json();}catch{}
-  const code=body?.error_code||body?.code||"";
-  const raw=body?.msg||body?.message||body?.error_description||body?.hint||body?.details||"";
-  if(code==="invalid_credentials"||/invalid login credentials/i.test(raw))return "Email atau password salah.";
-  if(code==="email_not_confirmed"||/not confirmed/i.test(raw))return "Email belum dikonfirmasi. Supabase → Authentication → Users → konfirmasi user tersebut.";
-  if(/invalid api key|no api key/i.test(raw))return "API key Supabase tidak valid.";
-  if(/rate limit/i.test(raw+code))return "Terlalu banyak percobaan. Tunggu beberapa menit.";
-  return (raw||"HTTP "+res.status)+(code?" ("+code+")":"");
-}
-async function authLogin(email,password){
-  const res=await fetchT(AUTH+"/token?grant_type=password",{method:"POST",headers:headers(),body:JSON.stringify({email,password})});
-  if(!res.ok)throw new Error(await readError(res));
-  return res.json();
-}
-async function authRefresh(refresh_token){
-  const res=await fetchT(AUTH+"/token?grant_type=refresh_token",{method:"POST",headers:headers(),body:JSON.stringify({refresh_token})});
-  if(!res.ok)throw new Error(await readError(res));
-  return res.json();
-}
-async function authUser(token){
-  const res=await fetchT(AUTH+"/user",{headers:{"apikey":SB_ANON_KEY,"Authorization":"Bearer "+token}});
-  if(!res.ok)throw new Error(await readError(res));
-  return res.json();
-}
+const SB_URL="https://ozsfnvzqtizptxymtxzf.supabase.co";
+const SB_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im96c2ZudnpxdGl6cHR4eW10eHpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwNjIzMjksImV4cCI6MjEwNjYzODMyOX0.2TuFxRzKL4aHjRsFNyVsG3-LPn4UGre64NzhnT7W1Po";
+const API=SB_URL+"/rest/v1",AUTH=SB_URL+"/auth/v1",STORAGE=SB_URL+"/storage/v1";
+const $=id=>document.getElementById(id);let session=null,productsCache=[];let pendingSmall=null,pendingLarge=null,pendingProductFile=null;const defaults={user:"admin",brand:"Witama Store.ID"};
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
 function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v);}catch{return null;}}
+function showLoginError(t){const e=$("loginError");if(e){e.textContent=t;e.className="notice error";}}
+function notice(t,error=false){const e=$("notice");if(!e)return;e.textContent=t;e.className="notice "+(error?"error":"success");clearTimeout(notice.timer);notice.timer=setTimeout(()=>e.classList.add("hidden"),4500);}
+const nativeFetch=window.fetch.bind(window);
+async function fetchT(url,opts={},ms=20000){const c=new AbortController(),timer=setTimeout(()=>c.abort(),ms);try{return await nativeFetch(url,{...opts,signal:c.signal});}catch(e){if(e?.name==="AbortError")throw new Error("Koneksi Supabase terlalu lama. Cek internet.");throw new Error("Tidak bisa terhubung ke Supabase.");}finally{clearTimeout(timer);}}
+function headers(token=null){return {apikey:SB_ANON_KEY,"Content-Type":"application/json",...(token?{Authorization:"Bearer "+token}:{})};}
+async function readError(res){let b=null;try{b=await res.json();}catch{}const code=b?.error_code||b?.code||"";const raw=b?.msg||b?.message||b?.error_description||b?.hint||b?.details||"";if(/invalid login credentials/i.test(raw)||code==="invalid_credentials")return "Email atau password salah.";if(code==="email_not_confirmed"||/not confirmed/i.test(raw))return "Email belum dikonfirmasi di Supabase Auth.";if(code==="PGRST303"||/JWT expired/i.test(raw))return "Sesi login kedaluwarsa.";if(/invalid api key|no api key/i.test(raw))return "API key Supabase tidak valid.";return (raw||"HTTP "+res.status)+(code?" ("+code+")":"");}
+async function authLogin(email,password){const r=await fetchT(AUTH+"/token?grant_type=password",{method:"POST",headers:headers(),body:JSON.stringify({email,password})});if(!r.ok)throw new Error(await readError(r));return r.json();}
+async function authRefresh(refresh_token){const r=await fetchT(AUTH+"/token?grant_type=refresh_token",{method:"POST",headers:headers(),body:JSON.stringify({refresh_token})});if(!r.ok)throw new Error(await readError(r));return r.json();}
+async function authUser(token){const r=await fetchT(AUTH+"/user",{headers:headers(token)});if(!r.ok)throw new Error(await readError(r));return r.json();}
 function saveSession(data){session=data;ls("tama_admin_session",JSON.stringify(data));if(data?.user?.email)ls("tama_admin_auth_email",data.user.email);}
-async function restoreSession(){
-  const raw=ls("tama_admin_session");if(!raw)return false;
-  try{
-    let s=JSON.parse(raw);
-    if(!s?.access_token)return false;
-    try{await authUser(s.access_token);session=s;return true;}
-    catch{
-      if(!s.refresh_token)throw new Error("Sesi login sudah berakhir.");
-      const fresh=await authRefresh(s.refresh_token);saveSession(fresh);return true;
-    }
-  }catch(e){ls("tama_admin_session",null);ls("tama_admin_auth_email",null);return false;}
-}
-async function db(path,options={}){
-  const makeOptions=token=>({...options,headers:{...headers(token),...(options.headers||{})}});
-  let res=await fetchT(API+path,makeOptions(session?.access_token));
-
-  // Access token Supabase hanya berlaku sementara. Jika token yang tersimpan
-  // sudah expired, refresh otomatis lalu ulangi request yang sama sekali lagi.
-  if(res.status===401 && session?.refresh_token){
-    try{
-      const fresh=await authRefresh(session.refresh_token);
-      if(!fresh?.access_token)throw new Error("Supabase tidak memberikan access token baru.");
-      saveSession(fresh);
-      res=await fetchT(API+path,makeOptions(fresh.access_token));
-    }catch(refreshErr){
-      throw new Error("Sesi login sudah kedaluwarsa. Silakan login kembali.");
-    }
-  }
-
-  if(!res.ok)throw new Error(await readError(res));
-  if(res.status===204)return null;
-
-  // Beberapa operasi Supabase dapat mengembalikan body kosong. Jangan paksa
-  // response kosong dibaca sebagai JSON.
-  const text=await res.text();
-  if(!text.trim())return null;
-  try{return JSON.parse(text);}catch{return null;}
-}
-async function publicDb(path){
-  const res=await fetchT(API+path,{headers:headers()});
-  if(!res.ok)throw new Error(await readError(res));
-  return res.json();
-}
-
-async function getSettings(){
-  const data=await db('/site_settings?select=id,brand,username&id=eq.1');
-  return data?.[0]||{id:1,...defaults};
-}
-async function getProducts(){
-  const data=await db('/products?select=id,title,description,image,link,order_num,active&order=order_num.asc');
-  productsCache=data||[];return productsCache;
-}
-async function showAdmin(){
-  $("loginView").classList.add("hidden");$("adminView").classList.remove("hidden");
-  try{await renderAdmin();await loadSettings();}catch(e){notice("Gagal memuat panel: "+e.message,true);}
-}
-async function login(){
-  const btn=$("loginBtn");if(btn){btn.disabled=true;btn.textContent="Memproses...";}
-  try{
-    $("loginError").className="notice error hidden";
-    const info=$("loginInfo");info.textContent="Menghubungkan ke Supabase...";info.classList.remove("hidden");
-    const identifier=$("loginUser").value.trim();const password=$("loginPass").value;
-    if(!identifier||!password){showLoginError("Email dan password wajib diisi.");return;}
-    let email=identifier;
-    if(!identifier.includes("@")){
-      const stored=ls("tama_admin_auth_email");
-      if(!stored){showLoginError("Login pertama wajib memakai email akun Supabase. Setelah berhasil, username bisa dipakai di perangkat ini.");return;}
-      email=stored;
-    }
-    const data=await authLogin(email,password);
-    if(!data?.access_token){showLoginError("Supabase tidak memberikan sesi login.");return;}
-    saveSession(data);await showAdmin();
-  }catch(e){showLoginError("Login gagal: "+e.message);}
-  finally{$("loginInfo").classList.add("hidden");if(btn){btn.disabled=false;btn.textContent="Masuk";}}
-}
-async function loadSettings(){const s=await getSettings();$("brandInput").value=s.brand||defaults.brand;$("settingsUser").value=s.username||defaults.user;}
-async function renderAdmin(){
-  const ps=await getProducts();const active=ps.filter(p=>p.active).length;
-  $("totalStat").textContent=ps.length;$("activeStat").textContent=active;$("inactiveStat").textContent=ps.length-active;$("productCount").textContent=`${ps.length} item`;
-  $("adminList").innerHTML=ps.length?ps.map(p=>`<div class="product-row"><div class="row-img">${p.image?`<img src="${esc(p.image)}" alt="">`:"✦"}</div><div class="row-info"><b>${esc(p.title)}</b><small>${esc(p.description)}</small><span class="${p.active?'on':'off'}">${p.active?'Aktif':'Nonaktif'}</span></div><div class="row-actions"><button onclick="editProduct('${esc(p.id)}')">Edit</button><button onclick="toggleProduct('${esc(p.id)}')">${p.active?'Nonaktifkan':'Aktifkan'}</button><button class="danger" onclick="deleteProduct('${esc(p.id)}')">Hapus</button></div></div>`).join(""):`<div class="empty">Belum ada produk.</div>`;
-}
-function openModal(p=null){$("modalTitle").textContent=p?"Edit Produk":"Tambah Produk";$("editId").value=p?.id||"";$("fTitle").value=p?.title||"";$("fDesc").value=p?.description||"";$("fImage").value=p?.image||"";$("fLink").value=p?.link||"";$("fOrder").value=p?.order_num??0;$("fActive").value=p?.active?1:0;$("modal").classList.remove("hidden");}
+async function ensureSession(){if(!session?.access_token)return false;try{await authUser(session.access_token);return true;}catch{if(!session.refresh_token)return false;try{saveSession(await authRefresh(session.refresh_token));return true;}catch{return false;}}}
+async function restoreSession(){const raw=ls("tama_admin_session");if(!raw)return false;try{session=JSON.parse(raw);if(await ensureSession())return true;}catch{}session=null;ls("tama_admin_session",null);return false;}
+async function db(path,options={},retry=true){if(!(await ensureSession()))throw new Error("Sesi login sudah berakhir. Silakan login kembali.");const r=await fetchT(API+path,{...options,headers:{...headers(session.access_token),...(options.headers||{})}});if((r.status===401||r.status===403)&&retry&&session.refresh_token){try{saveSession(await authRefresh(session.refresh_token));return db(path,options,false);}catch{}}if(!r.ok)throw new Error(await readError(r));if(r.status===204)return null;const txt=await r.text();return txt?JSON.parse(txt):null;}
+async function getSettings(){const d=await db('/site_settings?select=id,brand,username,logo_small,logo_large&id=eq.1');return d?.[0]||{id:1,...defaults,logo_small:"",logo_large:""};}
+async function getProducts(){const d=await db('/products?select=id,title,description,image,link,order_num,active&order=order_num.asc');productsCache=d||[];return productsCache;}
+function showAdmin(){$("loginView").classList.add("hidden");$("adminView").classList.remove("hidden");}
+async function login(){const btn=$("loginBtn");if(btn){btn.disabled=true;btn.textContent="Memproses...";}try{$("loginError").className="notice error hidden";const identifier=$("loginUser").value.trim(),password=$("loginPass").value;if(!identifier||!password){showLoginError("Email dan password wajib diisi.");return;}const data=await authLogin(identifier,password);if(!data?.access_token)throw new Error("Supabase tidak memberikan sesi login.");saveSession(data);showAdmin();await bootAdmin();}catch(e){showLoginError("Login gagal: "+e.message);}finally{if(btn){btn.disabled=false;btn.textContent="Masuk";}}}
+function setPreview(imgId,emptyId,url){const img=$(imgId),empty=$(emptyId);if(url){img.src=url;img.classList.remove("hidden");empty.classList.add("hidden");}else{img.removeAttribute("src");img.classList.add("hidden");empty.classList.remove("hidden");}}
+function loadPreview(file,imgId,emptyId){if(!file)return;const u=URL.createObjectURL(file);setPreview(imgId,emptyId,u);}
+async function uploadFile(file,folder){if(!file)return "";if(!file.type.startsWith("image/"))throw new Error("File harus berupa gambar.");if(file.size>4*1024*1024)throw new Error("Ukuran gambar maksimal 4 MB.");if(!(await ensureSession()))throw new Error("Sesi login sudah berakhir.");const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"jpg");const path=`${folder}/${Date.now()}-${Math.random().toString(36).slice(2,9)}.${ext}`;const r=await fetchT(`${STORAGE}/object/media/${path}`,{method:"POST",headers:{apikey:SB_ANON_KEY,Authorization:"Bearer "+session.access_token,"x-upsert":"true", "Content-Type":file.type},body:file});if((r.status===401||r.status===403)&&session.refresh_token){saveSession(await authRefresh(session.refresh_token));return uploadFile(file,folder);}if(!r.ok)throw new Error(await readError(r));return `${STORAGE}/object/public/media/${path}`;}
+async function renderAdmin(){const ps=await getProducts();const active=ps.filter(p=>p.active).length;$("totalStat").textContent=ps.length;$("activeStat").textContent=active;$("inactiveStat").textContent=ps.length-active;$("productCount").textContent=`${ps.length} item`;$("adminList").innerHTML=ps.length?ps.map(p=>`<div class="product-row"><div class="row-img">${p.image?`<img src="${esc(p.image)}" alt="">`:"✦"}</div><div class="row-info"><b>${esc(p.title)}</b><small>${esc(p.description)}</small><span class="${p.active?'on':'off'}">${p.active?'Aktif':'Nonaktif'}</span></div><div class="row-actions"><button data-action="edit" data-id="${esc(p.id)}">Edit</button><button data-action="toggle" data-id="${esc(p.id)}">${p.active?'Nonaktifkan':'Aktifkan'}</button><button class="danger" data-action="delete" data-id="${esc(p.id)}">Hapus</button></div></div>`).join(""):`<div class="empty">Belum ada produk.</div>`;}
+async function loadSettings(){const s=await getSettings();$("brandInput").value=s.brand||defaults.brand;$("settingsUser").value=s.username||defaults.user;setPreview("smallLogoPreview","smallLogoEmpty",s.logo_small);setPreview("largeLogoPreview","largeLogoEmpty",s.logo_large);$("adminNameTop").textContent=s.username||defaults.user;}
+async function bootAdmin(){try{await renderAdmin();await loadSettings();}catch(e){notice("Gagal memuat panel: "+e.message,true);}}
+function openModal(p=null){pendingProductFile=null;$("modalTitle").textContent=p?"Edit Produk":"Tambah Produk";$("editId").value=p?.id||"";$("fTitle").value=p?.title||"";$("fDesc").value=p?.description||"";$("fLink").value=p?.link||"";$("fOrder").value=p?.order_num??0;$("fActive").value=p?.active?1:0;$("productImageName").textContent=p?.image?"Foto tersimpan — pilih lagi untuk mengganti":"Belum ada foto";setPreview("productImagePreviewImg","productImagePreview",p?.image);$("productImagePreview").classList.toggle("hidden",!p?.image);$("modal").classList.remove("hidden");}
 function closeModal(){$("modal").classList.add("hidden");}
-function editProduct(id){openModal(productsCache.find(p=>String(p.id)===String(id)));}
-async function toggleProduct(id){try{const p=productsCache.find(x=>String(x.id)===String(id));if(!p)return;await db(`/products?id=eq.${encodeURIComponent(id)}`,{method:"PATCH",headers:{"Prefer":"return=minimal"},body:JSON.stringify({active:!p.active})});await renderAdmin();notice("Status produk diperbarui.");}catch(e){notice(e.message,true);}}
-async function deleteProduct(id){if(!confirm("Hapus produk ini?"))return;try{await db(`/products?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:{"Prefer":"return=minimal"}});await renderAdmin();notice("Produk dihapus.");}catch(e){notice(e.message,true);}}
-
-function bindEvents(){
-  $("loginForm").addEventListener("submit",e=>{e.preventDefault();login();});
-  $("logoutBtn").addEventListener("click",()=>{session=null;ls("tama_admin_session",null);ls("tama_admin_auth_email",null);location.reload();});
-  $("addBtn").addEventListener("click",()=>openModal());$("closeModal").addEventListener("click",closeModal);$("cancelBtn").addEventListener("click",closeModal);
-  $("productForm").addEventListener("submit",async e=>{e.preventDefault();try{const editing=!!$("editId").value;const id=$("editId").value||crypto.randomUUID();const item={id,title:$("fTitle").value.trim(),description:$("fDesc").value.trim(),image:$("fImage").value.trim(),link:$("fLink").value.trim(),order_num:+$("fOrder").value||0,active:+$("fActive").value===1};if(editing)await db(`/products?id=eq.${encodeURIComponent(id)}`,{method:"PATCH",headers:{"Prefer":"return=minimal"},body:JSON.stringify(item)});else await db('/products',{method:"POST",headers:{"Prefer":"return=minimal"},body:JSON.stringify(item)});closeModal();await renderAdmin();notice(editing?"Produk diperbarui.":"Produk ditambahkan.");}catch(e){notice("Gagal menyimpan: "+e.message,true);}});
-  $("saveSettings").addEventListener("click",async()=>{try{const brand=$("brandInput").value.trim()||defaults.brand;const username=$("settingsUser").value.trim()||defaults.user;await db('/site_settings?on_conflict=id',{method:"POST",headers:{"Prefer":"resolution=merge-duplicates,return=representation"},body:JSON.stringify({id:1,brand,username})});notice("Pengaturan tersimpan di Supabase.");}catch(e){notice("Gagal menyimpan: "+e.message,true);}});
-}
-
-(async function boot(){
-  try{bindEvents();$("loginUser").value=ls("tama_admin_auth_email")||"";if(await restoreSession())await showAdmin();}
-  catch(e){showLoginError("Admin gagal dijalankan: "+(e?.message||e));}
-})();
-
-window.addEventListener("unhandledrejection",e=>showLoginError("Error: "+(e.reason?.message||e.reason)));
+async function saveProduct(e){e.preventDefault();const btn=$("saveProductBtn");btn.disabled=true;btn.textContent="Menyimpan...";try{const editing=!!$("editId").value,id=$("editId").value||crypto.randomUUID();const old=productsCache.find(x=>String(x.id)===String(id));let image=old?.image||"";if(pendingProductFile)image=await uploadFile(pendingProductFile,"products");const item={id,title:$("fTitle").value.trim(),description:$("fDesc").value.trim(),image,link:$("fLink").value.trim(),order_num:+$("fOrder").value||0,active:+$("fActive").value===1};if(!item.title||!item.description||!item.link)throw new Error("Judul, deskripsi, dan link wajib diisi.");if(editing)await db(`/products?id=eq.${encodeURIComponent(id)}`,{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify(item)});else await db('/products',{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify(item)});closeModal();await renderAdmin();notice(editing?"Produk diperbarui.":"Produk ditambahkan.");}catch(e){notice("Gagal menyimpan: "+e.message,true);}finally{btn.disabled=false;btn.textContent="Simpan Produk";}}
+async function toggleProduct(id){try{const p=productsCache.find(x=>String(x.id)===String(id));if(!p)return;await db(`/products?id=eq.${encodeURIComponent(id)}`,{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({active:!p.active})});await renderAdmin();notice("Status produk diperbarui.");}catch(e){notice(e.message,true);}}
+async function deleteProduct(id){if(!confirm("Hapus produk ini?"))return;try{await db(`/products?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:{Prefer:"return=minimal"}});await renderAdmin();notice("Produk dihapus.");}catch(e){notice(e.message,true);}}
+async function saveBranding(){const btn=$("saveBranding");btn.disabled=true;btn.textContent="Menyimpan...";try{let s=await getSettings();let small=s.logo_small||"",large=s.logo_large||"";if(pendingSmall)small=await uploadFile(pendingSmall,"branding");if(pendingLarge)large=await uploadFile(pendingLarge,"branding");await db('/site_settings?on_conflict=id',{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({id:1,brand:s.brand||defaults.brand,username:s.username||defaults.user,logo_small:small,logo_large:large})});pendingSmall=null;pendingLarge=null;await loadSettings();notice("Logo berhasil disimpan.");}catch(e){notice("Gagal menyimpan logo: "+e.message,true);}finally{btn.disabled=false;btn.textContent="Simpan Branding";}}
+async function saveSettings(){const btn=$("saveSettings");btn.disabled=true;btn.textContent="Menyimpan...";try{const brand=$("brandInput").value.trim()||defaults.brand,username=$("settingsUser").value.trim()||defaults.user;const s=await getSettings();await db('/site_settings?on_conflict=id',{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({id:1,brand,username,logo_small:s.logo_small||"",logo_large:s.logo_large||""})});$("adminNameTop").textContent=username;notice("Pengaturan tersimpan.");}catch(e){notice("Gagal menyimpan: "+e.message,true);}finally{btn.disabled=false;btn.textContent="Simpan Pengaturan";}}
+function bindEvents(){$("loginForm").addEventListener("submit",login);$("logoutBtn").addEventListener("click",()=>{session=null;ls("tama_admin_session",null);location.reload();});$("addBtn").addEventListener("click",()=>openModal());$("closeModal").addEventListener("click",closeModal);$("cancelBtn").addEventListener("click",closeModal);$("productForm").addEventListener("submit",saveProduct);$("saveSettings").addEventListener("click",saveSettings);$("saveBranding").addEventListener("click",saveBranding);$("smallLogoBtn").addEventListener("click",()=>$("smallLogoFile").click());$("largeLogoBtn").addEventListener("click",()=>$("largeLogoFile").click());$("productImageBtn").addEventListener("click",()=>$("fImageFile").click());$("smallLogoFile").addEventListener("change",e=>{pendingSmall=e.target.files?.[0]||null;loadPreview(pendingSmall,"smallLogoPreview","smallLogoEmpty");});$("largeLogoFile").addEventListener("change",e=>{pendingLarge=e.target.files?.[0]||null;loadPreview(pendingLarge,"largeLogoPreview","largeLogoEmpty");});$("fImageFile").addEventListener("change",e=>{pendingProductFile=e.target.files?.[0]||null;if(pendingProductFile){$("productImageName").textContent=pendingProductFile.name;$("productImagePreview").classList.remove("hidden");loadPreview(pendingProductFile,"productImagePreviewImg","productImagePreview");}});$("adminList").addEventListener("click",e=>{const b=e.target.closest("button[data-action]");if(!b)return;const id=b.dataset.id;if(b.dataset.action==="edit")openModal(productsCache.find(p=>String(p.id)===String(id)));if(b.dataset.action==="toggle")toggleProduct(id);if(b.dataset.action==="delete")deleteProduct(id);});}
+(async()=>{try{bindEvents();$("loginUser").value=ls("tama_admin_auth_email")||"";if(await restoreSession()){showAdmin();await bootAdmin();}}catch(e){showLoginError("Admin gagal dijalankan: "+(e?.message||e));}})();
+window.addEventListener("unhandledrejection",e=>{if($("notice"))notice("Error: "+(e.reason?.message||e.reason),true);});

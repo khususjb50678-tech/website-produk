@@ -1,27 +1,30 @@
-# TAMA STORE — GitHub Pages + Supabase
+# Witama Store.ID — Final
 
-Versi ini memakai GitHub Pages untuk frontend dan Supabase untuk database + login admin.
+Versi final katalog GitHub Pages dengan Supabase.
 
-## 1. Buat project Supabase
-1. Buka https://supabase.com/
-2. Buat project baru.
-3. Buka SQL Editor, tempel isi `supabase.sql`, lalu Run.
-4. Buka Project Settings → API, salin Project URL dan anon/public key.
-5. Buka Authentication → Users → Add user, buat email + password admin.
+## Isi versi ini
+- Branding: **Witama Store.ID**.
+- Desain portrait/mobile **Futuristic Dark**.
+- Menu website hanya **Beranda**.
+- Produk tampil sebagai kartu compact.
+- Klik produk membuka detail: **logo, nama, deskripsi, dan link tujuan**.
+- Tombol **Buka Produk** membuka link tujuan.
+- Admin tetap menggunakan Supabase Auth + database.
+- Tambah/edit produk: foto dipilih **langsung dari file HP**, bukan URL.
+- Logo kecil dan logo besar/background juga dipilih **langsung dari file HP**.
+- File foto disimpan ke Supabase Storage bucket `media`.
+- Session JWT otomatis direfresh ketika kedaluwarsa.
 
-## 2. Masukkan konfigurasi
-Edit `admin.js` dan `script.js`, ganti:
-- `PASTE_SUPABASE_URL_HERE` dengan Project URL
-- `PASTE_SUPABASE_ANON_KEY_HERE` dengan anon/public key
+## Setup Supabase
+1. Buka Supabase > SQL Editor.
+2. Jalankan seluruh isi `supabase.sql` satu kali.
+3. Pastikan user admin sudah dibuat di Authentication > Users.
+4. Upload semua file ZIP ini ke root repository GitHub Pages.
+5. Buka `admin.html`, login memakai email/password Supabase.
 
-Anon/public key memang boleh berada di frontend jika Row Level Security (RLS) aktif. JANGAN masukkan `service_role` key ke GitHub.
+## Penting
+Jika Supabase kamu memakai pengaturan Data API exposure manual, expose tabel:
+- `public.products`
+- `public.site_settings`
 
-## 3. Upload ke GitHub Pages
-Upload semua file langsung ke root repository, termasuk `supabase.sql`. Aktifkan Settings → Pages → Deploy from branch → main → /(root).
-
-## 4. Login admin
-Buka `/admin.html`, lalu login memakai email/password akun Supabase Auth.
-
-Setelah itu tambah/edit/hapus produk dan simpan pengaturan. Data tersimpan di Supabase dan dapat dibaca pengunjung lain.
-
-Catatan: URL gambar harus publik (misalnya URL gambar/CDN).
+Jangan mengganti anon/publishable key dengan service role key di file website.
