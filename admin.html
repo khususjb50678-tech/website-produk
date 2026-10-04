@@ -7,12 +7,12 @@
 <body class="admin-page">
 <div id="loginView" class="login-view">
 <div class="login-card"><a class="brand" href="index.html"><span class="logo">T</span><b>TAMA <i>STORE</i></b></a>
-<h1>Admin Panel</h1><p>Masuk untuk mengelola katalog di browser ini.</p>
+<h1>Admin Panel</h1><p>Masuk untuk mengelola katalog yang tersimpan di Supabase.</p>
 <div id="loginError" class="notice error hidden"></div>
-<label>Username<input id="loginUser" autocomplete="username" placeholder="admin"></label>
+<label>Email Admin<input id="loginUser" type="email" autocomplete="username" placeholder="admin@email.com"></label>
 <label>Password<input id="loginPass" type="password" autocomplete="current-password" placeholder="••••••••"></label>
 <button id="loginBtn" class="btn primary full">Masuk</button>
-<small class="hint">Default: admin / admin123 — ubah dari menu Pengaturan setelah masuk.</small>
+<small class="hint">Login menggunakan Email + Password akun Supabase Auth yang kamu buat.</small>
 </div></div>
 
 <div id="adminView" class="hidden">
@@ -24,10 +24,9 @@
 <div class="admin-grid"><section><div class="panel"><div class="panel-head"><b>Daftar Produk</b><span id="productCount"></span></div><div id="adminList"></div></div></section>
 <aside><div class="panel"><div class="panel-head"><b>Pengaturan</b></div>
 <label>Nama Brand<input id="brandInput" value="TAMA STORE"></label>
-<label>Username Admin<input id="settingsUser"></label>
-<label>Password Admin<input id="settingsPass" type="password"></label>
+<label>Nama Admin<input id="settingsUser"></label>
 <button id="saveSettings" class="btn primary full">Simpan Pengaturan</button>
-<p class="hint">Data katalog tersimpan di localStorage browser ini. GitHub Pages tidak menyediakan database/server.</p>
+<p class="hint">Data katalog dan pengaturan tersimpan di Supabase, jadi perubahan bisa terlihat oleh pengunjung lain.</p>
 </div></aside></div>
 </main></div>
 
@@ -40,5 +39,5 @@
 <div class="two"><label>Urutan<input id="fOrder" type="number" min="0" value="0"></label><label>Status<select id="fActive"><option value="1">Aktif</option><option value="0">Nonaktif</option></select></label></div>
 <div class="modal-actions"><button type="button" id="cancelBtn" class="btn">Batal</button><button class="btn primary">Simpan Produk</button></div>
 </form></div></div>
-<script src="data.js"></script><script src="admin.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="data.js"></script><script src="admin.js"></script>
 </body></html>

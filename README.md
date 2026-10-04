@@ -1,19 +1,27 @@
-# TAMA STORE — GitHub Pages
+# TAMA STORE — GitHub Pages + Supabase
 
-Upload semua file di root repository. Website adalah static HTML/CSS/JS.
+Versi ini memakai GitHub Pages untuk frontend dan Supabase untuk database + login admin.
 
-## GitHub Pages
-Settings → Pages → Deploy from a branch → main → /(root) → Save.
+## 1. Buat project Supabase
+1. Buka https://supabase.com/
+2. Buat project baru.
+3. Buka SQL Editor, tempel isi `supabase.sql`, lalu Run.
+4. Buka Project Settings → API, salin Project URL dan anon/public key.
+5. Buka Authentication → Users → Add user, buat email + password admin.
 
-## Admin
-Buka `admin.html`.
-Default:
-- username: `admin`
-- password: `admin123`
+## 2. Masukkan konfigurasi
+Edit `admin.js` dan `script.js`, ganti:
+- `PASTE_SUPABASE_URL_HERE` dengan Project URL
+- `PASTE_SUPABASE_ANON_KEY_HERE` dengan anon/public key
 
-Ganti password dari menu Pengaturan.
+Anon/public key memang boleh berada di frontend jika Row Level Security (RLS) aktif. JANGAN masukkan `service_role` key ke GitHub.
 
-## Penting
-GitHub Pages tidak menjalankan backend/database. CRUD admin di project ini memakai localStorage browser. Artinya perubahan katalog hanya tersimpan pada browser/perangkat yang melakukan perubahan, bukan menjadi database publik untuk semua pengunjung.
+## 3. Upload ke GitHub Pages
+Upload semua file langsung ke root repository, termasuk `supabase.sql`. Aktifkan Settings → Pages → Deploy from branch → main → /(root).
 
-Untuk katalog publik yang berubah untuk semua orang melalui Admin Panel, diperlukan backend/database atau CMS/API eksternal.
+## 4. Login admin
+Buka `/admin.html`, lalu login memakai email/password akun Supabase Auth.
+
+Setelah itu tambah/edit/hapus produk dan simpan pengaturan. Data tersimpan di Supabase dan dapat dibaca pengunjung lain.
+
+Catatan: URL gambar harus publik (misalnya URL gambar/CDN).
