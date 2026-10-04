@@ -60,10 +60,30 @@ async function restoreSession(){
   }catch(e){ls("tama_admin_session",null);ls("tama_admin_auth_email",null);return false;}
 }
 async function db(path,options={}){
-  const res=await fetchT(API+path,{...options,headers:{...headers(session?.access_token),...(options.headers||{})}});
+  const makeOptions=token=>({...options,headers:{...headers(token),...(options.headers||{})}});
+  let res=await fetchT(API+path,makeOptions(session?.access_token));
+
+  // Access token Supabase hanya berlaku sementara. Jika token yang tersimpan
+  // sudah expired, refresh otomatis lalu ulangi request yang sama sekali lagi.
+  if(res.status===401 && session?.refresh_token){
+    try{
+      const fresh=await authRefresh(session.refresh_token);
+      if(!fresh?.access_token)throw new Error("Supabase tidak memberikan access token baru.");
+      saveSession(fresh);
+      res=await fetchT(API+path,makeOptions(fresh.access_token));
+    }catch(refreshErr){
+      throw new Error("Sesi login sudah kedaluwarsa. Silakan login kembali.");
+    }
+  }
+
   if(!res.ok)throw new Error(await readError(res));
   if(res.status===204)return null;
-  return res.json();
+
+  // Beberapa operasi Supabase dapat mengembalikan body kosong. Jangan paksa
+  // response kosong dibaca sebagai JSON.
+  const text=await res.text();
+  if(!text.trim())return null;
+  try{return JSON.parse(text);}catch{return null;}
 }
 async function publicDb(path){
   const res=await fetchT(API+path,{headers:headers()});
