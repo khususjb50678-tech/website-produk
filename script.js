@@ -1,15 +1,25 @@
 const SB_URL='https://ozsfnvzqtizptxymtxzf.supabase.co';
 const SB_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im96c2ZudnpxdGl6cHR4eW10eHpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwNjIzMjksImV4cCI6MjEwNjYzODMyOX0.2TuFxRzKL4aHjRsFNyVsG3-LPn4UGre64NzhnT7W1Po';
-const API=SB_URL+'/rest/v1'; const FALLBACK=window.DEFAULT_PRODUCTS||[];
-const $=id=>document.getElementById(id);
-function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
-async function api(path){const r=await fetch(API+path,{headers:{apikey:SB_ANON_KEY,Accept:'application/json'}});if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}
-function setBrand(s){const brand=s?.brand||'Witama Store.ID';document.querySelectorAll('.brand-name').forEach(e=>e.innerHTML=esc(brand).replace(/Store\.ID/i,'<i>Store.ID</i>'));$('footerBrand').textContent=brand;document.title=brand+' — Katalog';const small=s?.logo_small||'';document.querySelectorAll('#brandLogo').forEach(e=>{e.innerHTML=small?`<img src="${esc(small)}" alt="">`:'<span>W</span>';});}
+const API=SB_URL+'/rest/v1',FALLBACK=window.DEFAULT_PRODUCTS||[],$=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const W='<svg viewBox="0 0 130 110"><use href="#w"/></svg>';
+async function api(p){const r=await fetch(API+p,{headers:{apikey:SB_ANON_KEY,Accept:'application/json'}});if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}
+let products=[];
+function setBrand(s){const b=s?.brand||'Witama Store.ID',h=esc(b).replace(/Store\.ID/i,'<i>Store.ID</i>');document.querySelectorAll('.brand-name').forEach(e=>e.innerHTML=h);$('heroTitle').innerHTML=h;$('footerBrand').textContent=b;document.title=b+' — Katalog';
+ document.querySelectorAll('.brand-logo').forEach(e=>e.innerHTML=s?.logo_small?`<img src="${esc(s.logo_small)}" alt="">`:'<span>W</span>');
+ if(s?.logo_large)$('heroArt').innerHTML=`<img src="${esc(s.logo_large)}" alt="">`;}
 async function loadSettings(){try{return (await api('/site_settings?select=brand,logo_small,logo_large&id=eq.1'))?.[0]||window.DEFAULT_SETTINGS;}catch{return window.DEFAULT_SETTINGS;}}
-let products=[];let currentLink='';
-function render(list){products=list;const grid=$('productGrid');$('count').textContent=list.length+' katalog';grid.innerHTML=list.map((p,i)=>`<button class="catalog-card" data-i="${i}" type="button"><span class="card-glow"></span><span class="card-image">${p.image?`<img src="${esc(p.image)}" alt="">`:'<span>W</span>'}</span><span class="card-name">${esc(p.title)}</span><span class="card-arrow">›</span></button>`).join('');$('empty').classList.toggle('hidden',list.length>0);grid.querySelectorAll('.catalog-card').forEach(b=>b.addEventListener('click',()=>openDetail(products[+b.dataset.i])));}
-function openDetail(p){$('detailTitle').textContent=p.title;$('detailDesc').textContent=p.description||'Tidak ada deskripsi.';currentLink=p.link||'';const img=$('detailImage'),ph=$('detailPlaceholder');if(p.image){img.src=p.image;img.classList.remove('hidden');ph.classList.add('hidden');}else{img.removeAttribute('src');img.classList.add('hidden');ph.classList.remove('hidden');} $('detailOverlay').classList.remove('hidden');$('detailOverlay').setAttribute('aria-hidden','false');document.body.classList.add('modal-open');}
-function closeDetail(){$('detailOverlay').classList.add('hidden');$('detailOverlay').setAttribute('aria-hidden','true');document.body.classList.remove('modal-open');currentLink='';}
-$('closeDetail').addEventListener('click',closeDetail);$('detailOverlay').addEventListener('click',e=>{if(e.target===$('detailOverlay'))closeDetail();});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail();});$('openProduct').addEventListener('click',()=>{if(currentLink)window.open(currentLink,'_blank','noopener');});
-async function boot(){const s=await loadSettings();setBrand(s);let list=[];try{list=await api('/products?select=id,title,description,image,link,order_num,active&active=eq.true&order=order_num.asc');}catch{}if(!list.length)list=FALLBACK.filter(x=>Number(x.active)===1).sort((a,b)=>(a.order||0)-(b.order||0));render(list);$('year').textContent=new Date().getFullYear();}
-boot();
+const thumb=p=>p.image?`<img src="${esc(p.image)}" alt="">`:W;
+function render(){
+ $('homeGrid').innerHTML=products.slice(0,4).map(p=>`<a class="card neon" href="#p/${esc(p.id)}"><span class="ci">${thumb(p)}</span><b>${esc(p.title)}</b><span class="go">→</span></a>`).join('');
+ $('catList').innerHTML=products.map(p=>`<a class="row neon" href="#p/${esc(p.id)}"><span class="ri">${thumb(p)}</span><div><b>${esc(p.title)}</b><small>${esc(p.description)}</small></div><span class="go">→</span></a>`).join('');
+ $('empty').classList.toggle('hidden',products.length>0);route();}
+function show(id){['vHome','vCat','vDet'].forEach(v=>$(v).classList.toggle('hidden',v!==id));scrollTo(0,0);}
+let link='';
+function route(){const h=decodeURIComponent(location.hash.slice(1));
+ if(h.startsWith('p/')){const p=products.find(x=>x.id===h.slice(2));if(p){$('dTitle').textContent=p.title;$('dDesc').textContent=p.description||'';link=p.link||'';const i=$('dImg');if(p.image){i.src=p.image;i.classList.remove('hidden');$('dPh').classList.add('hidden');}else{i.classList.add('hidden');$('dPh').classList.remove('hidden');}return show('vDet');}}
+ show(h==='kategori'?'vCat':'vHome');}
+addEventListener('hashchange',route);
+$('openProduct').onclick=()=>{if(link)window.open(link,'_blank','noopener');};
+(async()=>{setBrand(await loadSettings());let l=[];try{l=await api('/products?select=id,title,description,image,link,order_num,active&active=eq.true&order=order_num.asc');}catch{}
+ if(!l.length)l=FALLBACK.filter(x=>Number(x.active)===1).sort((a,b)=>(a.order||0)-(b.order||0));products=l;render();$('year').textContent=new Date().getFullYear();})();

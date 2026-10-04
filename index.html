@@ -1,59 +1,39 @@
 <!doctype html>
-<html lang="id">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Witama Store.ID — Katalog</title>
-<meta name="description" content="Witama Store.ID — katalog digital.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261004-final">
-</head>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=20261004-v2"></head>
 <body class="site-page">
-<div class="wallpaper" aria-hidden="true"><span class="glow glow-a"></span><span class="glow glow-b"></span><span class="glow glow-c"></span><span class="grid-haze"></span></div>
-<header class="topbar">
-  <div class="topbar-inner">
-    <a class="brand" href="index.html" aria-label="Beranda">
-      <span class="brand-logo" id="brandLogo"><span>W</span></span>
-      <span class="brand-name" id="brandName">Witama <i>Store.ID</i></span>
-    </a>
-    <nav class="topnav"><a class="active" href="index.html">Beranda</a></nav>
-  </div>
-</header>
-
-<main>
-  <section class="hero-catalog">
-    <div class="hero-inner">
-      <span class="eyebrow"><span class="eyebrow-dot"></span> DIGITAL CATALOG</span>
-      <h1>Jelajahi <span>katalog</span><br>pilihan Witama.</h1>
-      <p class="hero-desc">Temukan layanan dan produk digital dalam satu tempat. Pilih katalog yang kamu butuhkan, lihat detailnya, lalu lanjut dengan satu sentuhan.</p>
-      <a class="hero-btn" href="#katalog">Jelajahi Katalog <b>↓</b></a>
-    </div>
-  </section>
-
-  <section id="katalog" class="catalog-section">
-    <div class="catalog-head"><div><span class="section-label">KATALOG</span><h2>Pilihan tersedia</h2></div><span id="count" class="catalog-count">0 katalog</span></div>
-    <div id="productGrid" class="catalog-list"></div>
-    <div id="empty" class="empty hidden">Belum ada katalog aktif.</div>
-  </section>
-</main>
-
-<div id="detailOverlay" class="detail-overlay hidden" aria-hidden="true">
-  <div class="detail-shell">
-    <button id="closeDetail" class="close-detail" aria-label="Tutup">×</button>
-    <div class="detail-art"><img id="detailImage" alt=""><div id="detailPlaceholder" class="detail-placeholder"><span>W</span></div></div>
-    <div class="detail-content">
-      <span class="section-label">DETAIL KATALOG</span>
-      <h2 id="detailTitle">Katalog</h2>
-      <p id="detailDesc"></p>
-      <button id="openProduct" class="hero-btn detail-btn">Buka Katalog <b>↗</b></button>
-    </div>
-  </div>
+<svg width="0" height="0" style="position:absolute"><defs><linearGradient id="wg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7a4dff"/><stop offset="1" stop-color="#3f86ff"/></linearGradient></defs><symbol id="w" viewBox="0 0 130 110"><path fill="url(#wg)" d="M6 12h30l15 58 14-38h0l14 38 15-58h30l-33 92H78L65 68 52 104H39z"/></symbol></svg>
+<div class="app">
+<!-- BERANDA -->
+<section id="vHome" class="view">
+  <header class="bar"><a class="brand" href="index.html"><span class="brand-logo"><span>W</span></span><b class="brand-name">Witama <i>Store.ID</i></b></a><div class="bar-r"><a class="pill" href="index.html">Lihat Website ↗</a><a class="pill sq" href="#kategori">···</a></div></header>
+  <div class="hero"><div class="hero-art" id="heroArt"><svg viewBox="0 0 130 110"><use href="#w"/></svg></div>
+    <span class="eyebrow">FAST • SAFE • TRUSTED</span><h1 id="heroTitle">Witama <i>Store.ID</i></h1><p>Solusi digital terbaik untuk kebutuhan online kamu.</p>
+    <a class="cta-line" href="#kategori"><span class="cta-ic">➶</span><b>Jelajahi Katalog</b><em>→</em></a></div>
+  <div class="sec-head"><b>KATALOG</b><a href="#kategori">Lihat Semua →</a></div>
+  <div id="homeGrid" class="grid2"></div><div id="empty" class="empty hidden">Belum ada katalog aktif.</div>
+</section>
+<!-- KATEGORI -->
+<section id="vCat" class="view hidden">
+  <header class="bar"><a class="brand" href="index.html"><span class="brand-logo"><span>W</span></span><b class="brand-name">Witama <i>Store.ID</i></b></a><div class="bar-r"><a class="pill" href="index.html">Lihat Website ↗</a><a class="pill sq" href="#">×</a></div></header>
+  <div class="head-txt"><span class="eyebrow">KATALOG</span><h2>Pilih Kategori<br>Katalog Favoritmu</h2><p>Temukan berbagai layanan digital terbaik hanya di Witama Store.ID.</p></div>
+  <div id="catList" class="list"></div>
+</section>
+<!-- DETAIL -->
+<section id="vDet" class="view hidden">
+  <header class="bar"><a class="brand" href="index.html"><span class="brand-logo"><span>W</span></span><b class="brand-name">Witama <i>Store.ID</i></b></a><div class="bar-r"><a class="pill sq" href="#kategori" aria-label="Tutup">×</a></div></header>
+  <div class="head-txt"><span class="eyebrow">KATALOG</span><h2 id="dTitle"></h2><p id="dDesc"></p></div>
+  <div class="d-art neon"><i class="badge">Rekomendasi</i><img id="dImg" alt=""><div id="dPh" class="ph"><svg viewBox="0 0 130 110"><use href="#w"/></svg></div></div>
+  <h3 class="d-h">Detail Katalog</h3>
+  <div class="feat"><span>◈</span><div><b>Akses Cepat</b><small>Proses langsung dalam hitungan detik</small></div></div>
+  <div class="feat"><span>🔒</span><div><b>Aman &amp; Terpercaya</b><small>Data anda selalu terlindungi</small></div></div>
+  <div class="feat"><span>◆</span><div><b>Harga Terbaik</b><small>Kualitas premium dengan harga bersahabat</small></div></div>
+  <button id="openProduct" class="btn-main">⚡ Buka Katalog →</button>
+</section>
+<footer><span id="year"></span> <span id="footerBrand">Witama Store.ID</span></footer>
 </div>
-
-<footer><span id="year"></span> <span id="footerBrand">Witama Store.ID</span> · Fast · Safe · Trusted</footer>
-<script src="data.js?v=20261004-final"></script>
-<script src="script.js?v=20261004-final"></script>
-</body>
-</html>
+<script src="data.js?v=20261004-v2"></script><script src="script.js?v=20261004-v2"></script>
+</body></html>
